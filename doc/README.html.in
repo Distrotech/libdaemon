@@ -126,8 +126,6 @@ compilation and <tt>make install</tt> (as root) for installation of
 
 <pre>svn checkout svn://seth.intheinter.net/libdaemon/trunk libdaemon</pre>
 
-<p>Get <tt>libdaemon</tt>'s development sources from the <a href="http://subversion.tigris.org/">Subversion</a> <a href="https://seth.intheinter.net:8081/svn/libdaemon/">repository</a>.</p>
-
 <p>You may find an up to date Debian package of <tt>libdaemon</tt> on the <a href="http://packages.debian.org/libdaemon0">Debian package repository</a>.</p>
 
 <p>If you want to be notified whenever I release a new version of this software use the subscription feature of <a href="http://freshmeat.net/projects/libdaemon/">Freshmeat</a>.</p>
