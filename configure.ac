@@ -19,7 +19,7 @@
 # along with libdaemon; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
-AC_PREREQ(2.58)
+AC_PREREQ(2.59)
 AC_INIT([libdaemon],[0.4],[mzqnrzba (at) 0pointer (dot) de])
 AC_CONFIG_SRCDIR([src/dfork.c])
 AC_CONFIG_HEADERS([config.h])
@@ -36,7 +36,7 @@ fi
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_MAKE_SET
-AM_PROG_LIBTOOL
+AC_PROG_LIBTOOL()
 
 # If using GCC specifiy some additional parameters
 if test "x$GCC" = "xyes" ; then
