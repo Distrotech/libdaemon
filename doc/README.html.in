@@ -70,6 +70,8 @@ daemons. It consists of the following parts:</p>
 
   <li>An API for serializing UNIX signals into a pipe for
   usage with <tt>select()</tt> or <tt>poll()</tt></li>
+
+  <li>An API for running subprocesses with STDOUT and STDERR redirected to syslog.</li>
 </ul>
 
 <p>Routines like these are included in most of the daemon software
@@ -116,8 +118,8 @@ compilation and <tt>make install</tt> (as root) for installation of
 <p>Get <tt>libdaemon</tt>'s development sources from the <a href="http://subversion.tigris.org/">Subversion</a> <a href="https://seth.intheinter.net:8081/svn/libdaemon/">repository</a>.</p>
 
 <hr/>
-<address>Lennart Poettering &lt;@PACKAGE_BUGREPORT@&gt;, January 2004</address>
-<div><i>$Id$</i></div>
+<address class="grey">Lennart Poettering &lt;@PACKAGE_BUGREPORT@&gt;, January 2004</address>
+<div class="grey"><i>$Id$</i></div>
 
 </body>
 </html>

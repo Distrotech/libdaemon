@@ -28,3 +28,8 @@ ul { margin-left: 0.5cm; }
 h1 { color: #00009F; }
 h2 { color: #00009F; }
 h3 { color: #00004F; margin-left: 0.5cm; }
+ul { margin-left: .5cm; }
+ol { margin-left: .5cm; }
+pre { margin-left: .5cm; background-color: #f0f0f0; padding: 0.4cm;}
+.grey { color: #afafaf; }
+
