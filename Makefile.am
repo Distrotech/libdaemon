@@ -33,7 +33,7 @@ README:
 doxygen:
 	$(MAKE) -C doc doxygen
 
-homepage:
+homepage: dist doxygen
 	test -d $$HOME/homepage/private
 	mkdir -p $$HOME/homepage/private/projects/libdaemon
 	cp libdaemon-@PACKAGE_VERSION@.tar.gz $$HOME/homepage/private/projects/libdaemon

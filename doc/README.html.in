@@ -43,7 +43,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.</p>
 <h2><a name="news">News</a></h2>
 
 <div class="news-date">Sat Dec 18 2004: </div>
-<p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.7.tar.gz">Version 0.7</a> released; changes include: minor cleanups</p>
+<p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.7.tar.gz">Version 0.7</a> released; changes include: minor cleanups; C++ compatibility; gcc 2.95 compatiblity</p>
 
 <div class="news-date">Wed Apr 7 2004: </div>
 <p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.6.tar.gz">Version 0.6</a> released; changes include: backgrounding fixes, minor other stuff</p>
