@@ -21,7 +21,7 @@
 
 AC_PREREQ(2.59)
 AC_INIT([libdaemon],[0.7],[mzqnrzba (at) 0pointer (dot) de])
-AC_CONFIG_SRCDIR([src/dfork.c])
+AC_CONFIG_SRCDIR([libdaemon/dfork.c])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([foreign -Wall])
 
@@ -87,5 +87,5 @@ fi
 
 AM_CONDITIONAL([USE_LYNX], [test "x$lynx" = xyes])
 
-AC_CONFIG_FILES([src/Makefile Makefile doc/Makefile doc/README.html doc/doxygen.conf examples/Makefile libdaemon.spec libdaemon.pc])
+AC_CONFIG_FILES([libdaemon/Makefile Makefile doc/Makefile doc/README.html doc/doxygen.conf examples/Makefile libdaemon.spec libdaemon.pc])
 AC_OUTPUT

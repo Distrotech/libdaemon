@@ -17,7 +17,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
 EXTRA_DIST=bootstrap.sh README LICENSE libdaemon.spec
-SUBDIRS=src doc examples
+SUBDIRS=libdaemon doc examples
 
 MAINTAINERCLEANFILES = README libdaemon.spec
 noinst_DATA = README libdaemon.spec
