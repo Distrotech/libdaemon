@@ -16,6 +16,8 @@
 # along with libdaemon; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
+AM_CFLAGS=-D_GNU_SOURCE
+
 pkginclude_HEADERS = dlog.h dfork.h dsignal.h dnonblock.h dpid.h dexec.h daemon.h
 
 lib_LTLIBRARIES = libdaemon.la
@@ -28,5 +30,4 @@ libdaemon_la_SOURCES = \
 	dpid.c dpid.h \
 	dexec.c dexec.h \
 	daemon.h
-
 libdaemon_la_LDFLAGS = -version-info 2:0:2

@@ -18,6 +18,10 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <sys/types.h>
 #include <unistd.h>
 #include <errno.h>
@@ -29,6 +33,8 @@
 #include <sys/wait.h>
 #include <assert.h>
 #include <sys/ioctl.h>
+#include <signal.h>
+#include <sys/time.h>
 
 #include "dfork.h"
 #include "dnonblock.h"
