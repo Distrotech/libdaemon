@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="iso-8895-15"?> <!-- -*-html-helper-*- -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>libdaemon @PACKAGE_VERSION@</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+<h1><a name="top">libdaemon @PACKAGE_VERSION@</a></h1>
+
+<p><i>Copyright 2003 Lennart Poettering &lt;mzyvoqnrzba [at] itaparica.org&gt;</i></p>
+
+<ul class="toc">
+    <li><a href="#license">License</a></li>
+    <li><a href="#news">News</a></li>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#status">Status</a></li>
+    <li><a href="#documentation">Documentation</a></li>
+    <li><a href="#requirements">Requirements</a></li>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#acks">Acknowledgements</a></li>
+    <li><a href="#download">Download</a></li>
+</ul>
+
+<h2><a name="license">License</a></h2>
+
+<p>This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the
+License, or (at your option) any later version.</p>
+
+<p>This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.</p>
+
+<p>You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.</p>
+
+<h2><a name="news">News</a></h2>
+
+<div class="news-date">Thu July 10 2003: </div>
+<p class="news-text"><a href="http://www.stud.uni-hamburg.de/~lennart/projects/libdaemon/libdaemon-0.3.tar.gz">Version 0.3</a> released; changes include: documentation update, build fixes, RPM spec file added</p>
+
+<div class="news-date">Thu July 10 2003: </div>
+<p class="news-text"><a href="http://www.stud.uni-hamburg.de/~lennart/projects/libdaemon/libdaemon-0.2.tar.gz">Version 0.2</a> released; changes include: ugly umask error fix, documentation update</p>
+
+<div class="news-date">Mon July 7 2003: </div>
+<p class="news-text"><a href="http://www.stud.uni-hamburg.de/~lennart/projects/libdaemon/libdaemon-0.1.tar.gz">Version 0.1</a> released</p>
+
+<h2><a name="overview">Overview</a></h2>
+
+<p><tt>libdaemon</tt> is a lightweight C library which eases the writing of UNIX
+daemons. It consists of the following parts:</p>
+
+<ul>
+  <li>A wrapper around <tt>fork()</tt> which does the correct
+  daemonization procedure of a process</lI>
+
+  <li>A wrapper around <tt>syslog()</tt> for simpler and compatible
+  log output to Syslog or STDERR</li>
+
+  <li>An API for writing PID files</li>
+
+  <li>An API for serializing UNIX signals into a pipe for
+  usage with <tt>select()</tt> or <tt>poll()</tt></li>
+</ul>
+
+<p>Routines like these are included in most of the daemon software
+available. It is not that simple to get it done right and code
+duplication cannot be a goal.</p>
+
+<p><tt>libdaemon</tt> is currently used by <a
+href="http://www.stud.uni-hamburg.de/~lennart/projects/ifplugd/"><tt>ifplugd</tt></a>.</p>
+
+<h2><a name="status">Status</a></h2>
+
+<p>Version 0.1 is feature complete.</p>
+
+<h2><a name="documentation">Documentation</a></h2>
+
+<p>An extensive API reference is <a
+href="reference/html/index.html">available</a></p>
+
+<h2><a name="requirements">Requirements</a></h2>
+
+<p><tt>libdaemon</tt> was developed and tested on Debian GNU/Linux
+"testing" from Jul 2003, it should work on most other Linux
+distributions (and maybe Unix versions) since it uses GNU Autoconf and
+GNU libtool for source code configuration and shared library
+management.</p>
+
+<h2><a name="installation">Installation</a></h2>
+
+<p>As this package is made with the GNU autotools you should run
+<tt>./configure</tt> inside the distribution directory for configuring
+the source tree. After that you should run <tt>make</tt> for
+compilation and <tt>make install</tt> (as root) for installation of
+<tt>libdaemon</tt>.</p>
+
+<h2><a name="acks">Acknowledgements</a></h2>
+
+<p>No special acknowledgements at this time, I am sorry.</p>
+
+<h2><a name="download">Download</a></h2>
+
+<p>The newest release is always available from <a href="http://www.stud.uni-hamburg.de/~lennart/projects/libdaemon/">http://www.stud.uni-hamburg.de/~lennart/projects/libdaemon/</a></p>
+
+<p>The current release is <a href="http://www.stud.uni-hamburg.de/~lennart/projects/libdaemon/libdaemon-@PACKAGE_VERSION@.tar.gz">@PACKAGE_VERSION@</a></p>
+
+<hr/>
+<address>Lennart Poettering &lt;mzyvoqnrzba [at] itaparica.org&gt;, July 2003</address>
+<div><i>$Id$</i></div>
+
+</body>
+</html>
