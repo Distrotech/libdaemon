@@ -21,6 +21,10 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** \file
  *
  * Contains a robust API for running sub processes with STDOUT and
@@ -43,5 +47,9 @@
  * @return Nonzero on failure, zero on success
  */
 int daemon_exec(const char *dir, int *ret, const char *prog, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

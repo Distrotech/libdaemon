@@ -21,6 +21,10 @@
 
 #include <sys/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** \file
  *
  * Contains an API for manipulating PID files. 
@@ -83,5 +87,9 @@ int daemon_pid_file_kill(int s);
  * @return zero on success, nonzero on failure (timeout condition is considered a failure)
  */
 int daemon_pid_file_kill_wait(int s, int m);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

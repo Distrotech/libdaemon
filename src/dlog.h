@@ -21,6 +21,10 @@
 
 #include <syslog.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** \file
  *
  * Contains a robust API for logging messages
@@ -57,5 +61,9 @@ void daemon_log(int prio, const char* t, ...);
  * @return The identification string
  */
 char *daemon_ident_from_argv0(char *argv0);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -19,6 +19,10 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** \file
  *
  * Contains a single function used to change a file descriptor to
@@ -33,5 +37,9 @@
  * @return Zero on success, nonzero on failure.
  */
 int daemon_nonblock(int fd, int b);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

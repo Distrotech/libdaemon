@@ -21,6 +21,10 @@
 
 #include <sys/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** \mainpage
  *
  * For a brief explanation of libdaemons's purpose, have a look on <a
@@ -90,5 +94,9 @@ int daemon_retval_wait(int timeout);
  * @return Zero on success, nonzero on failure.
  */
 int daemon_retval_send(int s);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

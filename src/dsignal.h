@@ -19,6 +19,10 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** \file
  *
  * Contains the API for serializing signals to a pipe for
@@ -61,5 +65,9 @@ int daemon_signal_next(void);
  * @return The file descriptor or negative on failure
  */
 int daemon_signal_fd(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
