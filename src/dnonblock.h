@@ -1,6 +1,8 @@
 #ifndef foodaemonnonblockhfoo
 #define foodaemonnonblockhfoo
 
+/* $Id$ */
+
 /*
  * This file is part of libdaemon.
  *

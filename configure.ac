@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
 AC_PREREQ(2.59)
-AC_INIT([libdaemon],[0.6],[mzqnrzba (at) 0pointer (dot) de])
+AC_INIT([libdaemon],[0.7],[mzqnrzba (at) 0pointer (dot) de])
 AC_CONFIG_SRCDIR([src/dfork.c])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([foreign -Wall])
@@ -38,14 +38,18 @@ AC_PROG_CXX
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL()
 
-# If using GCC specifiy some additional parameters
+# If using GCC specify some additional parameters
 if test "x$GCC" = "xyes" ; then
-   CFLAGS="$CFLAGS -pipe -Wall"
+   CFLAGS="$CFLAGS -pipe -W -Wall -pedantic"
+
+   AC_LANG_CONFTEST([int main() {}])
+   $CC -c conftest.c -std=c99 -Wno-unused-parameter $CFLAGS > /dev/null 2> /dev/null && CFLAGS="$CFLAGS -std=c99 -Wno-unused-parameter"
+   rm -f conftest.o
 fi
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h string.h syslog.h unistd.h])
+AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h string.h syslog.h unistd.h sys/ioctl.h sys/time.h])
 AC_HEADER_SYS_WAIT
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -60,6 +64,9 @@ AC_FUNC_SELECT_ARGTYPES
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([select strerror dup2 memset strrchr])
 AC_TYPE_MODE_T
+AC_FUNC_SETPGRP
+AC_TYPE_SIGNAL
+AC_TYPE_SIZE_T
 
 # DOXYGEN documentation generation
 AC_ARG_ENABLE(doxygen,

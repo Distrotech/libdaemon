@@ -18,16 +18,25 @@
 
 AM_CFLAGS=-D_GNU_SOURCE
 
-pkginclude_HEADERS = dlog.h dfork.h dsignal.h dnonblock.h dpid.h dexec.h daemon.h
+pkginclude_HEADERS = \
+	dlog.h \
+	dfork.h \
+	dsignal.h \
+	dnonblock.h \
+	dpid.h \
+	dexec.h \
+	daemon.h
 
 lib_LTLIBRARIES = libdaemon.la
 
 libdaemon_la_SOURCES = \
-	dlog.c dlog.h \
-	dfork.c dfork.h \
-	dsignal.c dsignal.h \
-	dnonblock.c dnonblock.h \
-	dpid.c dpid.h \
-	dexec.c dexec.h \
-	daemon.h
-libdaemon_la_LDFLAGS = -version-info 2:0:2
+	dlog.c \
+	dfork.c \
+	dsignal.c \
+	dnonblock.c \
+	dpid.c \
+	dexec.c \
+	daemon.h \
+	$(pkg_include_HEADERS)
+
+libdaemon_la_LDFLAGS = -version-info 2:1:2

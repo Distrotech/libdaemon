@@ -1,6 +1,9 @@
 #ifndef foodaemonsignalhfoo
 #define foodaemonsignalhfoo
 
+/* $Id$ */
+
+
 /*
  * This file is part of libdaemon.
  *
@@ -37,7 +40,7 @@ extern "C" {
  */
 
 /** Installs signal handlers for the specified signals
- * @param s, ... The signals to install handlers for. The list should be terminated by -1
+ * @param s, ... The signals to install handlers for. The list should be terminated by 0
  * @return zero on success, nonzero on failure
  */
 int daemon_signal_init(int s, ...);

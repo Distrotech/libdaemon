@@ -33,7 +33,7 @@ README:
 homepage:
 	test -d $$HOME/homepage/private
 	mkdir -p $$HOME/homepage/private/projects/libdaemon
-	cp *.tar.gz $$HOME/homepage/private/projects/libdaemon
+	cp libdaemon-@PACKAGE_VERSION@.tar.gz $$HOME/homepage/private/projects/libdaemon
 	cp doc/README.html doc/style.css $$HOME/homepage/private/projects/libdaemon
 	cp $$HOME/homepage/private/projects/libdaemon/README.html $$HOME/homepage/private/projects/libdaemon/index.html
 	cp -av doc/reference/ $$HOME/homepage/private/projects/libdaemon/

@@ -73,7 +73,7 @@ static ssize_t atomic_read(int fd, void *d, size_t l) {
         }
 
         t += r;
-        d += r;
+        d = (char*) d + r;
         l -= r;
     }
 
@@ -95,7 +95,7 @@ static ssize_t atomic_write(int fd, const void *d, size_t l) {
         }
 
         t += r;
-        d += r;
+        d = (char*) d + r;
         l -= r;
     }
 
@@ -212,7 +212,7 @@ pid_t daemon_fork(void) {
 	    setpgrp();
             
 	    if ((tty_fd = open("/dev/tty", O_RDWR)) >= 0) {
-		ioctl(tty_fd, TIOCNOTTY, (char*) 0);
+		ioctl(tty_fd, TIOCNOTTY, NULL);
 		close(tty_fd);
 	    }
         
@@ -300,9 +300,13 @@ int daemon_retval_wait(int timeout) {
     int i;
 
     if (timeout > 0) {
-        struct timeval tv = { timeout, 0 };
+        struct timeval tv;
         int s;
         fd_set fds;
+
+        tv.tv_sec = timeout;
+        tv.tv_usec = 0;
+        
         FD_ZERO(&fds);
         FD_SET(_daemon_retval_pipe[0], &fds);
 
