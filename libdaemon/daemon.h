@@ -26,11 +26,11 @@
  * A header file including all other header files part of libdaemon
  */
 
-#include <dfork.h>
-#include <dlog.h>
-#include <dpid.h>
-#include <dsignal.h>
-#include <dexec.h>
-#include <dnonblock.h>
+#include <libdaemon/dfork.h>
+#include <libdaemon/dlog.h>
+#include <libdaemon/dpid.h>
+#include <libdaemon/dsignal.h>
+#include <libdaemon/dexec.h>
+#include <libdaemon/dnonblock.h>
 
 #endif
