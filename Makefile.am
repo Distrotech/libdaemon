@@ -31,12 +31,12 @@ README:
 	ln -s doc/README README
 
 homepage:
-	test -d $$HOME/homepage/lennart
-	mkdir -p $$HOME/homepage/lennart/projects/libdaemon
-	cp *.tar.gz $$HOME/homepage/lennart/projects/libdaemon
-	cp doc/README.html doc/style.css $$HOME/homepage/lennart/projects/libdaemon
-	cp $$HOME/homepage/lennart/projects/libdaemon/README.html $$HOME/homepage/lennart/projects/libdaemon/index.html
-	cp -av doc/reference/ $$HOME/homepage/lennart/projects/libdaemon/
+	test -d $$HOME/homepage/private
+	mkdir -p $$HOME/homepage/private/projects/libdaemon
+	cp *.tar.gz $$HOME/homepage/private/projects/libdaemon
+	cp doc/README.html doc/style.css $$HOME/homepage/private/projects/libdaemon
+	cp $$HOME/homepage/private/projects/libdaemon/README.html $$HOME/homepage/private/projects/libdaemon/index.html
+	cp -av doc/reference/ $$HOME/homepage/private/projects/libdaemon/
 
 distcleancheck:
 	@:

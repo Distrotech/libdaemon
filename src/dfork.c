@@ -185,6 +185,11 @@ pid_t daemon_fork(void) {
         setsid();
         umask(0777);
         chdir("/");
+
+	if ((tty_fd = open("/dev/tty", O_RDWR|O_NOCTTY)) >= 0) {
+		ioctl(tty_fd, TIOCNOTTY);
+		close(tty_fd);
+	}
         
         if ((pid = fork()) < 0) { // Second fork
             daemon_log(LOG_ERR, "Second fork() failed: %s", strerror(errno));
