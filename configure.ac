@@ -19,8 +19,8 @@
 # along with libdaemon; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
-AC_PREREQ(2.57)
-AC_INIT([libdaemon], [0.4], [mzqnrzba (at) 0pointer (dot) de])
+AC_PREREQ(2.58)
+AC_INIT([libdaemon],[0.4],[mzqnrzba (at) 0pointer (dot) de])
 AC_CONFIG_SRCDIR([src/dfork.c])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([foreign -Wall])
@@ -36,7 +36,7 @@ fi
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_MAKE_SET
-AC_PROG_LIBTOOL
+AM_PROG_LIBTOOL
 
 # If using GCC specifiy some additional parameters
 if test "x$GCC" = "xyes" ; then
@@ -63,7 +63,7 @@ AC_TYPE_MODE_T
 
 # DOXYGEN documentation generation
 AC_ARG_ENABLE(doxygen,
-        AC_HELP_STRING([--disable-doxygen], [Turn off doxygen usage for documentation generation]),
+        AS_HELP_STRING(--disable-doxygen,Turn off doxygen usage for documentation generation),
 [case "${enableval}" in
   yes) doxygen=yes ;;
   no)  doxygen=no ;;
@@ -82,7 +82,7 @@ AM_CONDITIONAL([USE_DOXYGEN], [test "x$doxygen" = xyes])
 
 # LYNX documentation generation
 AC_ARG_ENABLE(lynx,
-        AC_HELP_STRING([--disable-lynx], [Turn off lynx usage for documentation generation]),
+        AS_HELP_STRING(--disable-lynx,Turn off lynx usage for documentation generation),
 [case "${enableval}" in
   yes) lynx=yes ;;
   no)  lynx=no ;;
