@@ -26,6 +26,8 @@
 #include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/wait.h>
+#include <assert.h>
 
 #include "dfork.h"
 #include "dnonblock.h"
@@ -49,31 +51,122 @@ static int _null_open(int f, int fd) {
     return fd;
 }
 
+static ssize_t atomic_read(int fd, void *d, size_t l) {
+    ssize_t t = 0;
+    
+    while (l > 0) {
+        ssize_t r;
+        
+        if ((r = read(fd, d, l)) <= 0) {
+
+            if (r < 0)
+                return t > 0 ? t : -1;
+            else
+                return t;
+        }
+
+        t += r;
+        d += r;
+        l -= r;
+    }
+
+    return t;
+}
+
+static ssize_t atomic_write(int fd, const void *d, size_t l) {
+    ssize_t t = 0;
+    
+    while (l > 0) {
+        ssize_t r;
+        
+        if ((r = write(fd, d, l)) <= 0) {
+
+            if (r < 0)
+                return t > 0 ? t : -1;
+            else
+                return t;
+        }
+
+        t += r;
+        d += r;
+        l -= r;
+    }
+
+    return t;
+}
+
+static int move_fd_up(int *fd) {
+    assert(fd);
+    
+    while (*fd <= 2) {
+        if ((*fd = dup(*fd)) < 0) {
+            daemon_log(LOG_ERR, "dup(): %s", strerror(errno));
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+static void sigchld(int s) {
+}
+
 pid_t daemon_fork(void) {
     pid_t pid;
-    int _pipe[2];
-    FILE *pipe_in, *pipe_out;
-    
-    pid_t p = (pid_t) -1;
+    int pipe_fds[2] = {-1, -1};
+    struct sigaction sa_old, sa_new;
+    sigset_t ss_old, ss_new;
 
-    if (pipe(_pipe) < 0 || !(pipe_out = fdopen(_pipe[0], "r")) || !(pipe_in = fdopen(_pipe[1], "w"))) {
-        daemon_log(LOG_ERR, "pipe() failed: %s", strerror(errno));
+    memset(&sa_new, 0, sizeof(sa_new));
+    sa_new.sa_handler = sigchld;
+    sa_new.sa_flags = SA_RESTART;
+    
+    if (sigaction(SIGCHLD, &sa_new, &sa_old) < 0) {
+        daemon_log(LOG_ERR, "sigaction() failed: %s", strerror(errno));
         return (pid_t) -1;
     }
 
-    daemon_nonblock(_pipe[1], 1);
-        
+    sigemptyset(&ss_new);
+    sigaddset(&ss_new, SIGCHLD);
+    
+    if (sigprocmask(SIG_UNBLOCK, &ss_new, &ss_old) < 0) {
+        daemon_log(LOG_ERR, "sigprocmask() failed: %s", strerror(errno));
+        sigaction(SIGCHLD, &sa_old, NULL);
+        return (pid_t) -1;
+    }
+    
+    if (pipe(pipe_fds) < 0) {
+        daemon_log(LOG_ERR, "pipe() failed: %s", strerror(errno));
+        sigaction(SIGCHLD, &sa_old, NULL);
+        sigprocmask(SIG_SETMASK, &ss_old, NULL);
+        return (pid_t) -1;
+    }
+
     if ((pid = fork()) < 0) { // First fork
         daemon_log(LOG_ERR, "First fork() failed: %s\n", strerror(errno));
-        fclose(pipe_in);
-        fclose(pipe_out);
+        close(pipe_fds[0]);
+        close(pipe_fds[1]);
+        sigaction(SIGCHLD, &sa_old, NULL);
+        sigprocmask(SIG_SETMASK, &ss_old, NULL);
         return (pid_t) -1;
 
     } else if (pid == 0) {
-        // First child
-
-        fclose(pipe_out);
+        pid_t dpid;
         
+        /* First child */
+
+        sigaction(SIGCHLD, &sa_old, NULL);
+        sigprocmask(SIG_SETMASK, &ss_old, NULL);
+        close(pipe_fds[0]);
+
+        /* Move file descriptors up*/
+        if (move_fd_up(&pipe_fds[1]) < 0)
+            goto fail;
+        if (_daemon_retval_pipe[0] >= 0 && move_fd_up(&_daemon_retval_pipe[0]) < 0)
+            goto fail;
+        if (_daemon_retval_pipe[1] >= 0 && move_fd_up(&_daemon_retval_pipe[1]) < 0)
+            goto fail;
+            
         if (_null_open(O_RDONLY, 0) < 0) {
             daemon_log(LOG_ERR, "Failed to open /dev/null for STDIN: %s", strerror(errno));
             goto fail;
@@ -88,7 +181,7 @@ pid_t daemon_fork(void) {
             daemon_log(LOG_ERR, "Failed to open /dev/null for STDERR: %s", strerror(errno));
             goto fail;
         }
-        
+
         setsid();
         umask(0777);
         chdir("/");
@@ -98,36 +191,50 @@ pid_t daemon_fork(void) {
             goto fail;
 
         } else if (pid == 0) {
-            // Second child
-            p = getpid();
-            fwrite(&p, sizeof(p), 1, pipe_in);
-            fclose(pipe_in);
+            /* Second child */
+            
+            setsid();
+            
+            dpid = getpid();
+            if (atomic_write(pipe_fds[1], &dpid, sizeof(dpid)) != sizeof(dpid))
+                goto fail;
+            close(pipe_fds[1]);
 
             if (daemon_log_use & DAEMON_LOG_AUTO)
                 daemon_log_use = DAEMON_LOG_SYSLOG;
-            
+
             return 0;
 
         } else {
-            // Second father
-            fclose(pipe_in);
+            /* Second father */
+            close(pipe_fds[1]);
             exit(0);
         }
             
     fail:
-        fwrite(&p, sizeof(p), 1, pipe_in);
-        fclose(pipe_in);
+        dpid = (pid_t) -1;
+        if (atomic_write(pipe_fds[1], &dpid, sizeof(dpid)) != sizeof(dpid))
+            daemon_log(LOG_ERR, "Failed to write error PID.");
+        close(pipe_fds[1]);
         exit(0);
 
-    } else { // First father
+    } else {
+        /* First father */
+        pid_t dpid;
 
-        fclose(pipe_in);
+        close(pipe_fds[1]);
+        waitpid(pid, NULL, WUNTRACED);
         
-        if (fread(&p, sizeof(p), 1, pipe_out) != 1)
-            p = (pid_t) -1;
+        sigprocmask(SIG_SETMASK, &ss_old, NULL);
+        sigaction(SIGCHLD, &sa_old, NULL);
 
-        fclose(pipe_out);
-        return p;
+        if (atomic_read(pipe_fds[0], &dpid, sizeof(dpid)) != sizeof(dpid)) {
+            daemon_log(LOG_ERR, "Failed to read daemon PID.");
+            dpid = (pid_t) -1;
+        }
+
+        close(pipe_fds[0]);
+        return dpid;
     }
 
 }
@@ -151,7 +258,8 @@ void daemon_retval_done(void) {
 
 int daemon_retval_send(int i) {
     ssize_t r;
-    r = write(_daemon_retval_pipe[1], &i, sizeof(i));
+
+    r = atomic_write(_daemon_retval_pipe[1], &i, sizeof(i));
 
     daemon_retval_done();
 
@@ -190,7 +298,7 @@ int daemon_retval_wait(int timeout) {
         }
     }
 
-    if ((r = read(_daemon_retval_pipe[0], &i, sizeof(i))) != sizeof(i)) {
+    if ((r = atomic_read(_daemon_retval_pipe[0], &i, sizeof(i))) != sizeof(i)) {
 
         if (r < 0)
             daemon_log(LOG_ERR, "read() failed while reading return value from pipe: %s", strerror(errno));
