@@ -25,26 +25,28 @@ AC_CONFIG_SRCDIR([src/dfork.c])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([foreign -Wall])
 
-# Checks for programs.
-AC_PROG_CC
-AC_PROG_CXX
-AC_PROG_LIBTOOL
-
 AC_SUBST(PACKAGE_URL, [http://0pointer.de/lennart/projects/libdaemon/])
-
-# If using GCC specifiy some additional parameters
-if test "x$GCC" = "xyes" ; then
-   CFLAGS="$CFLAGS -pipe -Wall"
-fi
 
 if type -p stow > /dev/null && test -d /usr/local/stow ; then
    AC_MSG_NOTICE([*** Found /usr/local/stow: default install prefix set to /usr/local/stow/${PACKAGE_NAME}-${PACKAGE_VERSION} ***])
    ac_default_prefix="/usr/local/stow/${PACKAGE_NAME}-${PACKAGE_VERSION}"
 fi
 
+# Checks for programs.
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_MAKE_SET
+AC_PROG_LIBTOOL
+
+# If using GCC specifiy some additional parameters
+if test "x$GCC" = "xyes" ; then
+   CFLAGS="$CFLAGS -pipe -Wall"
+fi
+
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h string.h syslog.h unistd.h])
+AC_HEADER_SYS_WAIT
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST

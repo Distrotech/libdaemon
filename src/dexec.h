@@ -33,8 +33,8 @@
 /** Run the specified executable with the specified arguments in the
  * specified directory and return the return value of the program in
  * the specified pointer. The calling process is blocked until the
- * child finishes, alls child output (either STDOUT or STDIN) is
- * written to syslog.
+ * child finishes and all child output (either STDOUT or STDIN) has
+ * been written to syslog.
  * 
  * @param dir Working directory for the process.
  * @param ret A pointer to an integer to write the return value of the program to.
