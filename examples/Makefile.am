@@ -18,7 +18,7 @@
 
 noinst_PROGRAMS = testd
 
-AM_CPPFLAGS=-I$(top_srcdir)/src
+AM_CPPFLAGS=-I$(top_srcdir)
 
 testd_SOURCES=testd.c
-testd_LDADD=../src/libdaemon.la
+testd_LDADD=../libdaemon/libdaemon.la
