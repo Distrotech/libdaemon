@@ -34,5 +34,7 @@ else
     autoconf -Wall
 
     ./configure --sysconfdir=/etc "$@"
+
+    make clean
 fi
 

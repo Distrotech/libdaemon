@@ -31,7 +31,6 @@ doxygen:
 	touch doxygen.conf
 	$(MAKE) reference
 
-
 maintainer-clean-local:
 	rm -rf reference
 endif
