@@ -43,7 +43,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.</p>
 <h2><a name="news">News</a></h2>
 
 <div class="news-date">Sat Jan 10 2004: </div>
-<p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.4.tar.gz">Version 0.4</a> released; changes include: new module <tt>dexec</tt>; added <tt>pkg-config</tt> support.</p>
+<p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.4.tar.gz">Version 0.4</a> released; changes include: new module <tt>dexec.c</tt>; added <tt>pkg-config</tt> support.</p>
 
 <div class="news-date">Mon Oct 20 2003: </div>
 <p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.3.tar.gz">Version 0.3</a> released; changes include: documentation update, build fixes, RPM spec file added, added new function int <tt>daemon_pid_file_kill_wait()</tt>.</p>
