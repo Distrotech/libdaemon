@@ -53,7 +53,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.</p>
 
 <h2><a name="overview">Overview</a></h2>
 
-<p><tt>libdaemon</tt> is a lightweight C library which eases the writing of UNIX
+<p><tt>libdaemon</tt> is a lightweight C library that eases the writing of UNIX
 daemons. It consists of the following parts:</p>
 
 <ul>

@@ -22,6 +22,9 @@ SUBDIRS=src doc examples
 MAINTAINERCLEANFILES = README libdaemon.spec
 noinst_DATA = README libdaemon.spec
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libdaemon.pc
+
 README:
 	rm -f README
 	$(MAKE) -C doc README

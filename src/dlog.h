@@ -21,12 +21,10 @@
 
 #include <syslog.h>
 
-
 /** \file
  *
  * Contains a robust API for logging messages
  */
-
 
 /** Specifies where to send the log messages to
  */

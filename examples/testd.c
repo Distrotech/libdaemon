@@ -26,6 +26,7 @@
 #include <dsignal.h>
 #include <dlog.h>
 #include <dpid.h>
+#include <dexec.h>
 
 int main(int argc, char *argv[]) {
     pid_t pid;
@@ -147,6 +148,7 @@ int main(int argc, char *argv[]) {
 
                     case SIGHUP:
                         daemon_log(LOG_INFO, "Got a HUP");
+                        daemon_exec("/", NULL, "/bin/ls", "ls", (char*) NULL);
                         break;
 
                 }

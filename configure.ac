@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
 AC_PREREQ(2.57)
-AC_INIT([libdaemon], [0.3], [mzqnrzba (at) 0pointer (dot) de])
+AC_INIT([libdaemon], [0.4], [mzqnrzba (at) 0pointer (dot) de])
 AC_CONFIG_SRCDIR([src/dfork.c])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([foreign -Wall])
@@ -38,8 +38,8 @@ if test "x$GCC" = "xyes" ; then
 fi
 
 if type -p stow > /dev/null && test -d /usr/local/stow ; then
-   AC_MSG_NOTICE([*** Found /usr/local/stow: installing to /usr/local/stow/${PACKAGE_NAME}-${PACKAGE_VERSION} ***])
-   AC_PREFIX_DEFAULT([/usr/local/stow/${PACKAGE_NAME}-${PACKAGE_VERSION}])
+   AC_MSG_NOTICE([*** Found /usr/local/stow: default install prefix set to /usr/local/stow/${PACKAGE_NAME}-${PACKAGE_VERSION} ***])
+   ac_default_prefix="/usr/local/stow/${PACKAGE_NAME}-${PACKAGE_VERSION}"
 fi
 
 # Checks for header files.
@@ -97,5 +97,5 @@ fi
 
 AM_CONDITIONAL([USE_LYNX], [test "x$lynx" = xyes])
 
-AC_CONFIG_FILES([src/Makefile Makefile doc/Makefile doc/README.html doc/doxygen.conf examples/Makefile libdaemon.spec])
+AC_CONFIG_FILES([src/Makefile Makefile doc/Makefile doc/README.html doc/doxygen.conf examples/Makefile libdaemon.spec libdaemon.pc])
 AC_OUTPUT

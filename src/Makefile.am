@@ -16,7 +16,7 @@
 # along with libdaemon; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
-pkginclude_HEADERS = dlog.h dfork.h dsignal.h dnonblock.h dpid.h
+pkginclude_HEADERS = dlog.h dfork.h dsignal.h dnonblock.h dpid.h dexec.h daemon.h
 
 lib_LTLIBRARIES = libdaemon.la
 
@@ -25,6 +25,8 @@ libdaemon_la_SOURCES = \
 	dfork.c dfork.h \
 	dsignal.c dsignal.h \
 	dnonblock.c dnonblock.h \
-	dpid.c dpid.h
+	dpid.c dpid.h \
+	dexec.c dexec.h \
+	daemon.h
 
-libdaemon_la_LDFLAGS = -version-info 1:0:1
+libdaemon_la_LDFLAGS = -version-info 2:0:2
