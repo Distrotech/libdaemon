@@ -65,6 +65,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/*
 %{_libdir}/*.a
 %{_libdir}/*.so
+%{_libdir}/pkgconfig/*.pc
 
 %changelog
 * Mon Jul 21 2003 Lennart Poettering 0.3

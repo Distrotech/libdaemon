@@ -42,6 +42,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.</p>
 
 <h2><a name="news">News</a></h2>
 
+<div class="news-date">Wed Apr 7 2004: </div>
+<p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.6.tar.gz">Version 0.6</a> released; changes include: backgrounding fixes, minor other stuff</p>
+
 <div class="news-date">Tue Feb 10 2004: </div>
 <p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.5.tar.gz">Version 0.5</a> released; changes include: signal handling fix, forking fix</p>
 
@@ -125,7 +128,7 @@ compilation and <tt>make install</tt> (as root) for installation of
 <p>If you want to be notified whenever I release a new version of this software use the subscription feature of <a href="http://freshmeat.net/projects/libdaemon/">Freshmeat</a>.</p>
 
 <hr/>
-<address class="grey">Lennart Poettering &lt;@PACKAGE_BUGREPORT@&gt;, February 2004</address>
+<address class="grey">Lennart Poettering &lt;@PACKAGE_BUGREPORT@&gt;, April 2004</address>
 <div class="grey"><i>$Id$</i></div>
 
 </body>
