@@ -30,6 +30,9 @@ README:
 	$(MAKE) -C doc README
 	ln -s doc/README README
 
+doxygen:
+	$(MAKE) -C doc doxygen
+
 homepage:
 	test -d $$HOME/homepage/private
 	mkdir -p $$HOME/homepage/private/projects/libdaemon

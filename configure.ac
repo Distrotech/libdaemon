@@ -68,25 +68,6 @@ AC_FUNC_SETPGRP
 AC_TYPE_SIGNAL
 AC_TYPE_SIZE_T
 
-# DOXYGEN documentation generation
-AC_ARG_ENABLE(doxygen,
-        AS_HELP_STRING(--disable-doxygen,Turn off doxygen usage for documentation generation),
-[case "${enableval}" in
-  yes) doxygen=yes ;;
-  no)  doxygen=no ;;
-  *) AC_MSG_ERROR(bad value ${enableval} for --disable-doxygen) ;;
-esac],[doxygen=yes])
-
-if test x$doxygen = xyes ; then
-   AC_CHECK_PROG(have_doxygen, doxygen, yes, no)
-
-   if test x$have_doxygen = xno ; then
-     AC_MSG_ERROR([*** Sorry, you have to install doxygen or use --disable-doxygen ***])
-   fi
-fi
-
-AM_CONDITIONAL([USE_DOXYGEN], [test "x$doxygen" = xyes])
-
 # LYNX documentation generation
 AC_ARG_ENABLE(lynx,
         AS_HELP_STRING(--disable-lynx,Turn off lynx usage for documentation generation),

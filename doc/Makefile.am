@@ -16,24 +16,17 @@
 # along with libdaemon; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
-noinst_DATA = README.html README reference
-EXTRA_DIST = $(noinst_DATA) style.css README.html.in reference
+noinst_DATA = README.html README
+EXTRA_DIST = $(noinst_DATA) style.css README.html.in
 
 MAINTAINERCLEANFILES = README README.html
 CLEANFILES =
 
-if USE_DOXYGEN
-reference: doxygen.conf
+doxygen: doxygen.conf
 	doxygen doxygen.conf
-	touch reference
-
-doxygen:
-	touch doxygen.conf
-	$(MAKE) reference
 
 maintainer-clean-local:
 	rm -rf reference
-endif
 
 if USE_LYNX
 README: README.html
@@ -45,9 +38,4 @@ endif
 tidy: README.html
 	tidy -e < README.html
 
-if USE_DOXYGEN
 .PHONY: doxygen tidy
-else
-.PHONY: tidy
-endif
-
