@@ -17,8 +17,9 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
 noinst_DATA = README.html README reference
+EXTRA_DIST = $(noinst_DATA) style.css README.html.in reference
+
 MAINTAINERCLEANFILES = README README.html
-EXTRA_DIST = style.css README README.html README.html.in reference
 CLEANFILES =
 
 if USE_DOXYGEN

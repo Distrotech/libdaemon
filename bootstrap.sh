@@ -24,8 +24,6 @@ if [ "x$1" = "xam" ] ; then
 else 
     set -ex
     
-    #make maintainer-clean || true
-
     rm -rf autom4te.cache
     rm -f config.cache
 
@@ -35,6 +33,6 @@ else
     automake -a -c
     autoconf -Wall
 
-    ./configure "$@"
+    ./configure --sysconfdir=/etc "$@"
 fi
 

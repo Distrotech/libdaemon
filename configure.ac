@@ -20,23 +20,27 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
 AC_PREREQ(2.57)
-AC_INIT([libdaemon], [0.3], [mzqnrzba@itaparica.org])
+AC_INIT([libdaemon], [0.3], [mzqnrzba (at) 0pointer (dot) de])
 AC_CONFIG_SRCDIR([src/dfork.c])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([foreign -Wall])
-AM_MAINTAINER_MODE
 
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_LIBTOOL
 
+AC_SUBST(PACKAGE_URL, [http://0pointer.de/lennart/projects/libdaemon/])
+
 # If using GCC specifiy some additional parameters
 if test "x$GCC" = "xyes" ; then
    CFLAGS="$CFLAGS -pipe -Wall"
 fi
 
-# Checks for libraries.
+if type -p stow > /dev/null && test -d /usr/local/stow ; then
+   AC_MSG_NOTICE([*** Found /usr/local/stow: installing to /usr/local/stow/${PACKAGE_NAME}-${PACKAGE_VERSION} ***])
+   AC_PREFIX_DEFAULT([/usr/local/stow/${PACKAGE_NAME}-${PACKAGE_VERSION}])
+fi
 
 # Checks for header files.
 AC_HEADER_STDC

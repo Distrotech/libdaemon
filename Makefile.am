@@ -35,4 +35,7 @@ homepage:
 	cp $$HOME/homepage/lennart/projects/libdaemon/README.html $$HOME/homepage/lennart/projects/libdaemon/index.html
 	cp -av doc/reference/ $$HOME/homepage/lennart/projects/libdaemon/
 
-.PHONY: homepage
+distcleancheck:
+	@:
+
+.PHONY: homepage distcleancheck

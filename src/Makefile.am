@@ -27,3 +27,4 @@ libdaemon_la_SOURCES = \
 	dnonblock.c dnonblock.h \
 	dpid.c dpid.h
 
+libdaemon_la_LDFLAGS = -version-info 1:0:1

@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <time.h>
 
 #include "dpid.h"
 #include "dlog.h"
@@ -87,6 +88,36 @@ int daemon_pid_file_kill(int s) {
         return -1;
 
     return 0;
+}
+
+int daemon_pid_file_kill_wait(int s, int m) {
+    pid_t pid;
+    time_t t;
+    
+    if ((pid = daemon_pid_file_is_running()) < 0)
+        return -1;
+
+    if (kill(pid, s) < 0)
+        return -1;
+
+    t = time(NULL) + m;
+
+    for (;;) {
+        int r;
+        struct timeval tv = { 0, 100000 };
+
+        if (time(NULL) > t)
+            return -1;
+            
+        if ((r = kill(pid, 0)) < 0 && errno != ESRCH)
+            return -1;
+
+        if (r)
+            return 0;
+
+        if (select(0, NULL, NULL, NULL, &tv) < 0)
+            return -1;
+    }
 }
 
 int daemon_pid_file_create(void) {
