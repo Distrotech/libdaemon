@@ -34,3 +34,5 @@ homepage:
 	cp doc/README.html doc/style.css $$HOME/homepage/lennart/projects/libdaemon
 	cp $$HOME/homepage/lennart/projects/libdaemon/README.html $$HOME/homepage/lennart/projects/libdaemon/index.html
 	cp -av doc/reference/ $$HOME/homepage/lennart/projects/libdaemon/
+
+.PHONY: homepage

@@ -46,40 +46,47 @@
  * STDOUT, STDERR are connected to /dev/null, the process is a session
  * leader, the current directory is changed to /, the umask is set to
  * 777.
- * @return zero on success in the child, the PID of the new
- * daemon process in the parent, nonzero on failure
+ * @return On success, the PID of the child process is returned in the
+ * parent's thread of execution, and a 0 is returned in the child's
+ * thread of execution. On failure, -1 will be returned in the
+ * parent's context, no child process will be created, and errno will
+ * be set appropriately.
  */
 pid_t daemon_fork(void);
 
-/** Initializes the library for allowing the passing of a return value
- * from the daemon initialization to the parent process. Call this
- * before calling any of the other daemon_retval_xxx() functions in
- * the parent, before forking.
+/** Allocate and initialize resources required by the
+ * daemon_retval_xxx() functions. These functions allow the child to
+ * send a value to the parent after completing its initialisation.
+ * Call this in the parent before forking.
  * @return zero on success, nonzero on failure.
  */
 int daemon_retval_init(void);
 
 /** Frees the resources allocated by daemon_retval_init(). This should
  * be called if neither daemon_retval_wait() nor daemon_retval_send()
- * is used. If a fork took place, the function should be called in
- * both the parent and the daemon. */
+ * is called in the current process. The resources allocated by
+ * daemon_retval_init() should be freed in both parent and daemon
+ * process. This may be achieved by using daemon_retval_wait()
+ * resp. daemon_retval_send(), or by using daemon_retval_done().
+ */
 void daemon_retval_done(void);
 
-/** Wait the specified amount of seconds for the response of the
- * daemon process and return the integer passed to
- * daemon_retval_send() in the daemon process. Should be called just
+/** Return the value sent by the child via the daemon_retval_send()
+ * function, but wait only the specified number of seconds before
+ * timing out and returning a negative number. Should be called just
  * once from the parent process only. A subsequent call to
  * daemon_retval_done() in the parent is ignored.
- * @param timeout The timeout in seconds
- * @return The integer passed daemon_retval_send() in the daemon
- * process, or negative on failure.
+ *
+ * @param timeout Thetimeout in seconds
+ * @return The integer passed daemon_retval_send() in the daemon process, or -1 on failure.
  */
 int daemon_retval_wait(int timeout);
 
-/** Send the specified integer to the parent process. Should be called
- * just once from the daemon process only. A subsequent call to
- * daemon_retval_done() in the daemon is ignored.
- * @param s The integer to pass to daemon_retval_wait() in the parent process
+/** Send the specified integer to the parent process. Do not send -1
+ * because this signifies a library error. Should be called just once
+ * from the daemon process only. A subsequent call to
+ * daemon_retval_done() in the daemon is ignored.  @param s The
+ * integer to pass to daemon_retval_wait() in the parent process
  * @return Zero on success, nonzero on failure.
  */
 int daemon_retval_send(int s);
