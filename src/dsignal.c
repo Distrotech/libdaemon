@@ -52,18 +52,34 @@ static int _init(void) {
 }
 
 int daemon_signal_install(int s){
+    sigset_t sigset;
     struct sigaction sa;
 
     if (_init() < 0)
         return -1;
     
+    if (sigemptyset(&sigset) < 0) {
+        daemon_log(LOG_ERR, "sigemptyset(): %s", strerror(errno));
+        return -1;
+    }
+
+    if (sigaddset(&sigset, s) < 0) {
+        daemon_log(LOG_ERR, "sigaddyset(): %s", strerror(errno));
+        return -1;
+    }
+
+    if (sigprocmask(SIG_UNBLOCK, &sigset, NULL) < 0) {
+        daemon_log(LOG_ERR, "sigprocmask(): %s", strerror(errno));
+        return -1;
+    }
+
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = _sigfunc;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART;
         
     if (sigaction(s, &sa, NULL) < 0) {
-        daemon_log(LOG_ERR, "sigaction(%s, ...) failed.", strsignal(s));
+        daemon_log(LOG_ERR, "sigaction(%s, ...) failed: %s", strsignal(s), strerror(errno));
         return -1;
     }
 

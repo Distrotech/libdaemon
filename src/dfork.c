@@ -103,7 +103,6 @@ pid_t daemon_fork(void) {
             fwrite(&p, sizeof(p), 1, pipe_in);
             fclose(pipe_in);
 
-
             if (daemon_log_use & DAEMON_LOG_AUTO)
                 daemon_log_use = DAEMON_LOG_SYSLOG;
             
@@ -121,6 +120,9 @@ pid_t daemon_fork(void) {
         exit(0);
 
     } else { // First father
+
+        fclose(pipe_in);
+        
         if (fread(&p, sizeof(p), 1, pipe_out) != 1)
             p = (pid_t) -1;
 

@@ -42,6 +42,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.</p>
 
 <h2><a name="news">News</a></h2>
 
+<div class="news-date">Sun Feb 8 2004: </div>
+<p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.5.tar.gz">Version 0.5</a> released; changes include: signal handling fix.</p>
+
 <div class="news-date">Sat Jan 10 2004: </div>
 <p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.4.tar.gz">Version 0.4</a> released; changes include: new module <tt>dexec.c</tt>; added <tt>pkg-config</tt> support.</p>
 
