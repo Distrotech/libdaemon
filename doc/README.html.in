@@ -10,7 +10,7 @@
 <body>
 <h1><a name="top">libdaemon @PACKAGE_VERSION@</a></h1>
 
-<p><i>Copyright 2003 Lennart Poettering &lt;@PACKAGE_BUGREPORT@&gt;</i></p>
+<p><i>Copyright 2003,2004 Lennart Poettering &lt;@PACKAGE_BUGREPORT@&gt;</i></p>
 
 <ul class="toc">
     <li><a href="#license">License</a></li>
@@ -42,8 +42,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.</p>
 
 <h2><a name="news">News</a></h2>
 
-<div class="news-date">Sun Feb 8 2004: </div>
-<p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.5.tar.gz">Version 0.5</a> released; changes include: signal handling fix.</p>
+<div class="news-date">Tue Feb 10 2004: </div>
+<p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.5.tar.gz">Version 0.5</a> released; changes include: signal handling fix, forking fix</p>
 
 <div class="news-date">Sat Jan 10 2004: </div>
 <p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.4.tar.gz">Version 0.4</a> released; changes include: new module <tt>dexec.c</tt>; added <tt>pkg-config</tt> support.</p>
@@ -77,11 +77,11 @@ daemons. It consists of the following parts:</p>
   <li>An API for running subprocesses with STDOUT and STDERR redirected to syslog.</li>
 </ul>
 
-<p>Routines like these are included in most of the daemon software
+<p>APIs like these are used in most daemon software
 available. It is not that simple to get it done right and code
-duplication cannot be a goal.</p>
+duplication is not a goal.</p>
 
-<p><tt>libdaemon</tt> is currently used by <a href="http://0pointer.de/lennart/projects/ifplugd/"><tt>ifplugd</tt></a>, <a href="http://0pointer.de/lennart/projects/waproamd/"><tt>waproamd</tt></a> and <a href="http://0pointer.de/lennart/projects/aeswepd/"><tt>aeswepd</tt></a>.</p>
+<p><tt>libdaemon</tt> is currently used by <a href="http://0pointer.de/lennart/projects/ifplugd/"><tt>ifplugd</tt></a>, <a href="http://0pointer.de/lennart/projects/waproamd/"><tt>waproamd</tt></a>, <a href="http://0pointer.de/lennart/projects/ivam2/"><tt>ivam2</tt></a> and <a href="http://0pointer.de/lennart/projects/aeswepd/"><tt>aeswepd</tt></a>.</p>
 
 <h2><a name="status">Status</a></h2>
 
@@ -120,8 +120,12 @@ compilation and <tt>make install</tt> (as root) for installation of
 
 <p>Get <tt>libdaemon</tt>'s development sources from the <a href="http://subversion.tigris.org/">Subversion</a> <a href="https://seth.intheinter.net:8081/svn/libdaemon/">repository</a>.</p>
 
+<p>You may find an up to date Debian package of <tt>libdaemon</tt> on the <a href="http://packages.debian.org/libdaemon0">Debian package repository</a>.</p>
+
+<p>If you want to be notified whenever I release a new version of this software use the subscription feature of <a href="http://freshmeat.net/projects/libdaemon/">Freshmeat</a>.</p>
+
 <hr/>
-<address class="grey">Lennart Poettering &lt;@PACKAGE_BUGREPORT@&gt;, January 2004</address>
+<address class="grey">Lennart Poettering &lt;@PACKAGE_BUGREPORT@&gt;, February 2004</address>
 <div class="grey"><i>$Id$</i></div>
 
 </body>
