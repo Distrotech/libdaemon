@@ -38,7 +38,7 @@ homepage: dist doxygen
 	mkdir -p $$HOME/homepage/private/projects/libdaemon
 	cp libdaemon-@PACKAGE_VERSION@.tar.gz $$HOME/homepage/private/projects/libdaemon
 	cp doc/README.html doc/style.css $$HOME/homepage/private/projects/libdaemon
-	ln -sf READE.html $$HOME/homepage/private/projects/libdaemon/index.html
+	ln -sf README.html $$HOME/homepage/private/projects/libdaemon/index.html
 	cp -av doc/reference/ $$HOME/homepage/private/projects/libdaemon/
 
 distcleancheck:
