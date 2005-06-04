@@ -31,7 +31,7 @@ extern "C" {
  * STDERR redirected to syslog
  */
 
-/** If this variable is defined to 1 iff daemon_exec() is supported.*/
+/** This variable is defined to 1 iff daemon_exec() is supported.*/
 #define DAEMON_EXEC_AVAILABLE 1
 
 /** Run the specified executable with the specified arguments in the

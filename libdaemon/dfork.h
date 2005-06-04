@@ -27,10 +27,12 @@
 extern "C" {
 #endif
 
-/** \mainpage
+/** \mainpage libdaemon
  *
- * For a brief explanation of libdaemons's purpose, have a look on <a
- * href="../../README.html">the README file</a>. Thank you!
+ * libdaemon
+ * 
+ * For a brief explanation of libdaemons's purpose, have a look on the
+ * README file. Thank you!
  *
  */
 
