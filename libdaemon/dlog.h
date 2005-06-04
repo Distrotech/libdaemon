@@ -32,7 +32,7 @@ extern "C" {
  * Contains a robust API for logging messages
  */
 
-/** Specifies where to send the log messages to
+/** Specifies where to send the log messages to. The global variable daemon_log_use takes values of this type.
  */
 enum daemon_log_flags {
     DAEMON_LOG_SYSLOG = 1,   /**< Log messages are written to syslog */

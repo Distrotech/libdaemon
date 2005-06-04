@@ -32,13 +32,15 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <fcntl.h>
+#include <stddef.h>
 
 #include "dpid.h"
 #include "dlog.h"
 
 #define VARRUN "/var/run"
 
-const char *daemon_pid_file_ident = 0;
+const char *daemon_pid_file_ident = NULL;
 daemon_pid_file_proc_t daemon_pid_file_proc = daemon_pid_file_proc_default;
 
 const char *daemon_pid_file_proc_default(void) {
@@ -47,41 +49,74 @@ const char *daemon_pid_file_proc_default(void) {
     return fn;
 }
 
+static int lock_file(int fd, int enable) {
+    struct flock f;
+
+    memset(&f, 0, sizeof(f));
+    f.l_type = enable ? F_WRLCK : F_UNLCK;
+    f.l_whence = SEEK_SET;
+    f.l_start = 0;
+    f.l_len = 0;
+    
+    if (fcntl(fd, F_SETLKW, &f) < 0) {
+        daemon_log(LOG_WARNING, "fcntl(F_SETLKW) failed: %s", strerror(errno));
+        return -1;
+    }
+
+    return 0;
+}
+
 pid_t daemon_pid_file_is_running(void) {
     const char *fn;
     static char txt[256];
-    FILE *f;
-    pid_t pid;
-
+    int fd = -1, locked = -1;
+    pid_t ret = (pid_t) -1, pid;
+    ssize_t l;
 
     if (!(fn = daemon_pid_file_proc()))
-        return (pid_t) -1;
+        goto finish;
 
-    if (!(f = fopen(fn, "r")))
-        return (pid_t) -1;
+    if ((fd = open(fn, O_RDWR, 0644)) < 0) {
+        if (errno != ENOENT)
+            daemon_log(LOG_WARNING, "Failed to open PID file: %s", strerror(errno));
 
-        if (!(fgets(txt, sizeof(txt), f))) {
-        daemon_log(LOG_WARNING, "PID file corrupt, removing. (%s)", fn);
-        unlink(fn);
-        fclose(f);
-        return (pid_t) -1;
+        goto finish;
     }
 
-    fclose(f);
+    if ((locked = lock_file(fd, 1)) < 0)
+        goto finish;
+    
+    if ((l = read(fd, txt, sizeof(txt)-1)) < 0) {
+        daemon_log(LOG_WARNING, "read(): %s", strerror(errno));
+        unlink(fn);
+        goto finish;
+    }
 
+    txt[l] = 0;
+    
     if ((pid = (pid_t) atoi(txt)) <= 0) {
         daemon_log(LOG_WARNING, "PID file corrupt, removing. (%s)", fn);
         unlink(fn);
-        return (pid_t) -1;
+        goto finish;
     }
 
     if (kill(pid, 0) != 0 && errno != EPERM) {
-        daemon_log(LOG_WARNING, "Daemon %u killed: %s; removing PID file. (%s)", pid, strerror(errno), fn);
+        daemon_log(LOG_WARNING, "Process %lu died: %s; removing PID file. (%s)", (unsigned long) pid, strerror(errno), fn);
         unlink(fn);
-        return (pid_t) -1;
+        goto finish;
+    }
+
+    ret = pid;
+    
+finish:
+
+    if (fd >= 0) {
+        if (locked >= 0)
+            lock_file(fd, 0);
+        close(fd);
     }
     
-    return pid;
+    return ret;
 }
 
 int daemon_pid_file_kill(int s) {
@@ -128,23 +163,45 @@ int daemon_pid_file_kill_wait(int s, int m) {
 
 int daemon_pid_file_create(void) {
     const char *fn;
-    FILE *f;
-    mode_t save;
+    int fd = -1;
+    int ret = -1;
+    int locked = -1;
+    char t[64];
+    ssize_t l;
 
     if (!(fn = daemon_pid_file_proc()))
-        return -1;
+        goto finish;
 
-    save = umask(022);
+    if ((fd = open(fn, O_CREAT|O_RDWR|O_EXCL, 0644)) < 0) {
+        fprintf(stderr, "open(%s): %s", fn, strerror(errno));
+        goto finish;
+    }
+
+    if ((locked = lock_file(fd, 1)) < 0) {
+        unlink(fn);
+        goto finish;
+    }
+
+    snprintf(t, sizeof(t), "%lu\n", (unsigned long) getpid());
+
+    if (write(fd, t, l = strlen(t)) != l) {
+        daemon_log(LOG_WARNING, "write(): %s", strerror(errno));
+        unlink(fn);
+        goto finish;
+    }
+
+    ret = 0;
+
+finish:
+
+    if (fd >= 0) {
+        if (locked >= 0)
+            lock_file(fd, 0);
+            
+        close(fd);
+    }
     
-    if (!(f = fopen(fn, "w")))
-        return -1;
-
-    fprintf(f, "%u\n", getpid());
-    fclose(f);
-
-    umask(save);
-
-    return 0;
+    return ret;
 }
 
 int daemon_pid_file_remove(void) {
