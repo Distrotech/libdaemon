@@ -104,7 +104,7 @@ href="reference/html/index.html">available</a></p>
 <h2><a name="requirements">Requirements</a></h2>
 
 <p><tt>libdaemon</tt> was developed and tested on Debian GNU/Linux
-"testing" from Jul 2003, it should work on most other Linux
+"testing" from July 2003, it should work on most other Linux
 distributions (and maybe Unix versions) since it uses GNU Autoconf and
 GNU libtool for source code configuration and shared library
 management.</p>
