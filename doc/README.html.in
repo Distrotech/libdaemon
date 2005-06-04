@@ -16,7 +16,7 @@
     <li><a href="#license">License</a></li>
     <li><a href="#news">News</a></li>
     <li><a href="#overview">Overview</a></li>
-    <li><a href="#status">Status</a></li>
+    <li><a href="#status">Current Status</a></li>
     <li><a href="#documentation">Documentation</a></li>
     <li><a href="#requirements">Requirements</a></li>
     <li><a href="#installation">Installation</a></li>
@@ -92,7 +92,7 @@ duplication is not a goal.</p>
 
 <p><tt>libdaemon</tt> is currently used by <a href="http://0pointer.de/lennart/projects/ifplugd/"><tt>ifplugd</tt></a>, <a href="http://0pointer.de/lennart/projects/waproamd/"><tt>waproamd</tt></a>, <a href="http://0pointer.de/lennart/projects/ivam2/"><tt>ivam2</tt></a> and <a href="http://0pointer.de/lennart/projects/aeswepd/"><tt>aeswepd</tt></a>.</p>
 
-<h2><a name="status">Status</a></h2>
+<h2><a name="status">Current Status</a></h2>
 
 <p>Version @PACKAGE_VERSION@ is feature complete.</p>
 
