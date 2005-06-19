@@ -147,8 +147,10 @@ int daemon_pid_file_kill_wait(int s, int m) {
         int r;
         struct timeval tv = { 0, 100000 };
 
-        if (time(NULL) > t)
+        if (time(NULL) > t) {
+            errno = ETIME;
             return -1;
+        }
             
         if ((r = kill(pid, 0)) < 0 && errno != ESRCH)
             return -1;

@@ -50,11 +50,18 @@ extern enum daemon_log_flags daemon_log_use;
  * to set this to a sensible value or generate your own. */
 extern char* daemon_log_ident;
 
+#ifdef __GNUC__
+/** A macro for making use of GCCs printf compilation warnings */
+#define DAEMON_GCC_PRINTF_ATTR(a,b) __attribute__ ((format (printf, a, b)))
+#else
+#define DAEMON_GCC_PRINTF_ATTR(a,b)
+#endif
+
 /** Log a message using printf format strings using the specified syslog priority
  * @param prio The syslog priority (PRIO_xxx constants)
  * @param t,... The text message to log
  */
-void daemon_log(int prio, const char* t, ...);
+void daemon_log(int prio, const char* t, ...) DAEMON_GCC_PRINTF_ATTR(2,3);
 
 /** Return a sensible syslog identification for daemon_log_ident
  * generated from argv[0]. This will return a pointer to the file name
