@@ -107,7 +107,8 @@ int daemon_exec(const char *dir, int *ret, const char *prog, ...) {
     
     FD_ZERO(&fds);
     FD_SET(p[0], &fds);
-    FD_SET(sigfd = daemon_signal_fd(), &fds);
+    sigfd = daemon_signal_fd();
+    FD_SET(sigfd, &fds);
 
     n = 0;
 

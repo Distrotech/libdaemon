@@ -209,7 +209,7 @@ pid_t daemon_fork(void) {
 	    signal(SIGTSTP, SIG_IGN);
 	    
 	    setsid();
-	    setpgrp();
+	    setpgid(0,0);
             
 	    if ((tty_fd = open("/dev/tty", O_RDWR)) >= 0) {
 		ioctl(tty_fd, TIOCNOTTY, NULL);
