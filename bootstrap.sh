@@ -29,7 +29,7 @@ run_versioned() {
 
 if [ "x$1" = "xam" ] ; then
     set -ex
-    run_versioned automake "$REVISION" -a -c
+    run_versioned automake "$VERSION" -a -c
     ./config.status
 else 
     set -ex
@@ -40,7 +40,7 @@ else
     run_versioned aclocal "$VERSION"
     libtoolize -c --force
     autoheader
-    run_versioned automake "$REVISION" -a -c --foreign
+    run_versioned automake "$VERSION" -a -c --foreign
     autoconf -Wall
 
     CFLAGS="$CFLAGS -g -O0" ./configure --sysconfdir=/etc "$@"
