@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # $Id$
 
 # This file is part of libdaemon.
@@ -27,7 +27,7 @@ run_versioned() {
 
 if [ "x$1" = "xam" ] ; then
     set -ex
-    run_versioned automake 1.7 -a -c
+    run_versioned automake 1.9 -a -c
     ./config.status
 else 
     set -ex
@@ -35,10 +35,10 @@ else
     rm -rf autom4te.cache
     rm -f config.cache
 
-    run_versioned aclocal 1.7
+    run_versioned aclocal 1.9
     libtoolize -c --force
     autoheader
-    run_versioned automake 1.7 -a -c
+    run_versioned automake 1.9 -a -c
     autoconf -Wall
 
     ./configure --sysconfdir=/etc "$@"

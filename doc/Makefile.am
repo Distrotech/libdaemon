@@ -16,10 +16,10 @@
 # along with libdaemon; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
-noinst_DATA = README.html README
+noinst_DATA = README.html
 EXTRA_DIST = $(noinst_DATA) style.css README.html.in
 
-MAINTAINERCLEANFILES = README README.html
+MAINTAINERCLEANFILES = README.html
 CLEANFILES =
 
 doxygen: doxygen.conf
@@ -29,6 +29,8 @@ maintainer-clean-local:
 	rm -rf reference
 
 if USE_LYNX
+noinst_DATA += README
+MAINTAINERCLEANFILES += README
 README: README.html
 	lynx --dump $^ | sed 's,file://localhost/.*/doc/README.html,README,' | sed 's,file://localhost/.*/doc/reference/,reference/,' > $@
 

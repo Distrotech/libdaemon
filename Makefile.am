@@ -16,19 +16,25 @@
 # along with libdaemon; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
-EXTRA_DIST=bootstrap.sh README LICENSE libdaemon.spec
+EXTRA_DIST=bootstrap.sh LICENSE libdaemon.spec
 SUBDIRS=libdaemon doc examples
 
-MAINTAINERCLEANFILES = README libdaemon.spec
-noinst_DATA = README libdaemon.spec
+MAINTAINERCLEANFILES = libdaemon.spec
+noinst_DATA = libdaemon.spec
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libdaemon.pc
+
+if USE_LYNX
+noinst_DATA += README
+EXTRA_DIST += README
+MAINTAINERCLEANFILES += README
 
 README:
 	rm -f README
 	$(MAKE) -C doc README
 	ln -s doc/README README
+endif
 
 doxygen:
 	$(MAKE) -C doc doxygen
