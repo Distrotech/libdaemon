@@ -17,6 +17,8 @@
 # along with libdaemon; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
+VERSION=1.9
+
 run_versioned() {
     local P
     type -p "$1-$2" &> /dev/null && P="$1-$2" || local P="$1"
@@ -27,7 +29,7 @@ run_versioned() {
 
 if [ "x$1" = "xam" ] ; then
     set -ex
-    run_versioned automake 1.9 -a -c
+    run_versioned automake "$REVISION" -a -c
     ./config.status
 else 
     set -ex
@@ -35,13 +37,13 @@ else
     rm -rf autom4te.cache
     rm -f config.cache
 
-    run_versioned aclocal 1.9
+    run_versioned aclocal "$VERSION"
     libtoolize -c --force
     autoheader
-    run_versioned automake 1.9 -a -c
+    run_versioned automake "$REVISION" -a -c --foreign
     autoconf -Wall
 
-    ./configure --sysconfdir=/etc "$@"
+    CFLAGS="$CFLAGS -g -O0" ./configure --sysconfdir=/etc "$@"
 
     make clean
 fi
