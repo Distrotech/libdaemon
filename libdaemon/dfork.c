@@ -285,7 +285,7 @@ int daemon_retval_send(int i) {
     if (r != sizeof(i)) {
 
         if (r < 0)
-            daemon_log(LOG_ERR, "read() failed while writing return value to pipe: %s", strerror(errno));
+            daemon_log(LOG_ERR, "write() failed while writing return value to pipe: %s", strerror(errno));
         else
             daemon_log(LOG_ERR, "write() too short while writing return value from pipe");
         

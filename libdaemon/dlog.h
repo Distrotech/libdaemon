@@ -48,7 +48,7 @@ extern enum daemon_log_flags daemon_log_use;
 
 /** Specifies the syslog identification, use daemon_ident_from_argv0()
  * to set this to a sensible value or generate your own. */
-extern char* daemon_log_ident;
+extern const char* daemon_log_ident;
 
 #ifdef __GNUC__
 /** A macro for making use of GCCs printf compilation warnings */

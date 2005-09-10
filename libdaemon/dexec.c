@@ -34,6 +34,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <assert.h>
 
 #include "dlog.h"
 #include "dsignal.h"
@@ -50,6 +51,8 @@ int daemon_exec(const char *dir, int *ret, const char *prog, ...) {
     int sigfd, r;
     fd_set fds;
     va_list ap;
+
+    assert(daemon_signal_fd() >= 0);
 
     if (pipe(p) < 0) {
         daemon_log(LOG_ERR, "pipe() failed: %s", strerror(errno));
@@ -164,15 +167,25 @@ int daemon_exec(const char *dir, int *ret, const char *prog, ...) {
         buf[n] = 0;
         daemon_log(LOG_WARNING, "client: %s", buf); 
     }
-    
-    waitpid(pid, &r, 0);
-    
+
     close(p[0]);
     
-    if (!WIFEXITED(r))
-        return -1;
+    for (;;) {
+        if (waitpid(pid, &r, 0) < 0) {
 
-    if (ret)
-        *ret = WEXITSTATUS(r);
-    return 0;
+            if (errno == EINTR)
+                continue;
+
+            daemon_log(LOG_ERR, "waitpid(): %s", strerror(errno));
+            return -1;
+        } else {
+            if (!WIFEXITED(r))
+                return -1;
+
+            if (ret)
+                *ret = WEXITSTATUS(r);
+
+            return 0;
+        }
+    }
 }

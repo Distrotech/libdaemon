@@ -29,7 +29,7 @@
 #include "dlog.h"
 
 enum daemon_log_flags daemon_log_use = DAEMON_LOG_AUTO|DAEMON_LOG_STDERR;
-char* daemon_log_ident = NULL;
+const char* daemon_log_ident = NULL;
 
 void daemon_log(int prio, const char* template, ...) {
     va_list arglist;
