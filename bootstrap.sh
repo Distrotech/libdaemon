@@ -22,14 +22,12 @@ case `uname -s` in
     Darwin)
     export LIBTOOLIZE=/opt/local/bin/glibtoolize
     export PKG_CONFIG_PATH="/opt/local/lib/pkgconfig"
-    FLAGS="$FLAGS --prefix=/opt/local --disable-lynx"
+    FLAGS="$FLAGS --prefix=/opt/local"
     ;;
     FreeBSD)
     cp /usr/local/share/aclocal/libtool15.m4 common
     export LIBTOOLIZE=/usr/local/bin/libtoolize15
     export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
-    ;;
-    Linux)
     ;;
 esac
 
