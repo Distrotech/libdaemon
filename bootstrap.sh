@@ -25,9 +25,7 @@ case `uname -s` in
     FLAGS="$FLAGS --prefix=/opt/local"
     ;;
     FreeBSD)
-    cp /usr/local/share/aclocal/libtool15.m4 common
-    export LIBTOOLIZE=/usr/local/bin/libtoolize15
-    export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
+    cp /usr/local/share/aclocal/libtool15.m4 common/
     ;;
 esac
 

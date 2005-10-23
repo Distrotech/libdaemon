@@ -38,6 +38,10 @@
 #include "dpid.h"
 #include "dlog.h"
 
+#ifndef ETIME
+#define ETIME ETIMEDOUT /* For FreeBSD */
+#endif
+
 #define VARRUN "/var/run"
 
 const char *daemon_pid_file_ident = NULL;
