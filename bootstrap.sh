@@ -1,5 +1,4 @@
-#!/bin/sh
-# $Id$
+# $Id: bootstrap.sh 89 2005-08-24 22:57:12Z lennart $
 
 # This file is part of libdaemon.
 #
@@ -17,34 +16,21 @@
 # along with libdaemon; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
-VERSION=1.9
+FLAGS="--sysconfdir=/etc"
 
-run_versioned() {
-    local P
-    type -p "$1-$2" &> /dev/null && P="$1-$2" || local P="$1"
+case `uname -s` in
+    Darwin)
+    export LIBTOOLIZE=/opt/local/bin/glibtoolize
+    export PKG_CONFIG_PATH="/opt/local/lib/pkgconfig"
+    FLAGS="$FLAGS --prefix=/opt/local --disable-lynx"
+    ;;
+    FreeBSD)
+    cp /usr/local/share/aclocal/libtool15.m4 common
+    export LIBTOOLIZE=/usr/local/bin/libtoolize15
+    export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
+    ;;
+    Linux)
+    ;;
+esac
 
-    shift 2
-    "$P" "$@"
-}
-
-if [ "x$1" = "xam" ] ; then
-    set -ex
-    run_versioned automake "$VERSION" -a -c
-    ./config.status
-else 
-    set -ex
-    
-    rm -rf autom4te.cache
-    rm -f config.cache
-
-    run_versioned aclocal "$VERSION"
-    libtoolize -c --force
-    autoheader
-    run_versioned automake "$VERSION" -a -c --foreign
-    autoconf -Wall
-
-    CFLAGS="$CFLAGS -g -O0" ./configure --sysconfdir=/etc "$@"
-
-    make clean
-fi
-
+CFLAGS="$CFLAGS -g -O0" exec ./autogen.sh $FLAGS "$@"
