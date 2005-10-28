@@ -42,8 +42,27 @@ AC_PROG_LIBTOOL()
 if test "x$GCC" = "xyes" ; then
    CFLAGS="$CFLAGS -pipe -W -Wall -pedantic"
 
+   # Test whether sys/signal.h can be included when compiled with -std=c99
+   AC_MSG_CHECKING([checking whether sys/signal.h can be included with -std=c99])
+   OLDCFLAGS="$CFLAGS"
+   CFLAGS="-std=c99"
+   AC_TRY_COMPILE([#include <sys/signal.h>],
+                   [int main(void) {
+                   struct sigaction sa; 
+                   sa.sa_handler = 0;
+		   return 0;
+		   };], use_stdc99=yes, use_stdc99=no)
+
+   if test x"$use_stdc99" = xyes; then
+      CFLAGS="-std=c99 $OLDCFLAGS"
+      AC_MSG_RESULT([yes])
+   else
+      AC_MSG_RESULT([no])
+      CFLAGS="$OLDCFLAGS"
+   fi
+
    AC_LANG_CONFTEST([int main() {}])
-   $CC -c conftest.c -std=c99 -Wno-unused-parameter $CFLAGS > /dev/null 2> /dev/null && CFLAGS="$CFLAGS -std=c99 -Wno-unused-parameter"
+   $CC -c conftest.c -Wno-unused-parameter $CFLAGS > /dev/null 2> /dev/null && CFLAGS="$CFLAGS -Wno-unused-parameter"
    rm -f conftest.o
 fi
 

@@ -210,12 +210,12 @@ pid_t daemon_fork(void) {
 	    
 	    setsid();
 	    setpgid(0,0);
-            
+#ifdef TIOCNOTTY
 	    if ((tty_fd = open("/dev/tty", O_RDWR)) >= 0) {
 		ioctl(tty_fd, TIOCNOTTY, NULL);
 		close(tty_fd);
 	    }
-        
+#endif
             dpid = getpid();
             if (atomic_write(pipe_fds[1], &dpid, sizeof(dpid)) != sizeof(dpid))
                 goto fail;
