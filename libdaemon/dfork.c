@@ -95,7 +95,7 @@ static ssize_t atomic_write(int fd, const void *d, size_t l) {
         }
 
         t += r;
-        d = (char*) d + r;
+        d = (const char*) d + r;
         l -= r;
     }
 
@@ -149,7 +149,7 @@ pid_t daemon_fork(void) {
         return (pid_t) -1;
     }
 
-    if ((pid = fork()) < 0) { // First fork
+    if ((pid = fork()) < 0) { /* First fork */
         daemon_log(LOG_ERR, "First fork() failed: %s\n", strerror(errno));
         close(pipe_fds[0]);
         close(pipe_fds[1]);
@@ -193,7 +193,7 @@ pid_t daemon_fork(void) {
         umask(0777);
         chdir("/");
 
-        if ((pid = fork()) < 0) { // Second fork
+        if ((pid = fork()) < 0) { /* Second fork */
             daemon_log(LOG_ERR, "Second fork() failed: %s", strerror(errno));
             goto fail;
 
