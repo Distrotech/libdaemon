@@ -56,23 +56,23 @@ static int _init(void) {
 }
 
 int daemon_signal_install(int s){
-    sigset_t sigset;
+    sigset_t ss;
     struct sigaction sa;
 
     if (_init() < 0)
         return -1;
     
-    if (sigemptyset(&sigset) < 0) {
+    if (sigemptyset(&ss) < 0) {
         daemon_log(LOG_ERR, "sigemptyset(): %s", strerror(errno));
         return -1;
     }
 
-    if (sigaddset(&sigset, s) < 0) {
+    if (sigaddset(&ss, s) < 0) {
         daemon_log(LOG_ERR, "sigaddyset(): %s", strerror(errno));
         return -1;
     }
 
-    if (sigprocmask(SIG_UNBLOCK, &sigset, NULL) < 0) {
+    if (sigprocmask(SIG_UNBLOCK, &ss, NULL) < 0) {
         daemon_log(LOG_ERR, "sigprocmask(): %s", strerror(errno));
         return -1;
     }
