@@ -175,10 +175,13 @@ int daemon_pid_file_create(void) {
     int locked = -1;
     char t[64];
     ssize_t l;
+    mode_t u;
+
+    u = umask(022);
 
     if (!(fn = daemon_pid_file_proc()))
         goto finish;
-
+    
     if ((fd = open(fn, O_CREAT|O_RDWR|O_EXCL, 0644)) < 0) {
         fprintf(stderr, "open(%s): %s", fn, strerror(errno));
         goto finish;
@@ -207,6 +210,8 @@ finish:
             
         close(fd);
     }
+    
+    umask(u);
     
     return ret;
 }
