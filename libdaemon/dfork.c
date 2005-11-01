@@ -227,7 +227,7 @@ pid_t daemon_fork(void) {
         } else {
             /* Second father */
             close(pipe_fds[1]);
-            exit(0);
+            _exit(0);
         }
             
     fail:
@@ -235,7 +235,7 @@ pid_t daemon_fork(void) {
         if (atomic_write(pipe_fds[1], &dpid, sizeof(dpid)) != sizeof(dpid))
             daemon_log(LOG_ERR, "Failed to write error PID.");
         close(pipe_fds[1]);
-        exit(0);
+        _exit(0);
 
     } else {
         /* First father */
