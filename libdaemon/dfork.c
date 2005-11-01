@@ -150,7 +150,7 @@ pid_t daemon_fork(void) {
     }
 
     if ((pid = fork()) < 0) { /* First fork */
-        daemon_log(LOG_ERR, "First fork() failed: %s\n", strerror(errno));
+        daemon_log(LOG_ERR, "First fork() failed: %s", strerror(errno));
         close(pipe_fds[0]);
         close(pipe_fds[1]);
         sigaction(SIGCHLD, &sa_old, NULL);

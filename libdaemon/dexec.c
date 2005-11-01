@@ -101,7 +101,7 @@ int daemon_exec(const char *dir, int *ret, const char *prog, ...) {
         
         execv(prog, args);
         
-        daemon_log(LOG_ERR, "execv(%s) failed: %s\n", prog, strerror(errno));
+        daemon_log(LOG_ERR, "execv(%s) failed: %s", prog, strerror(errno));
         
         _exit(EXIT_FAILURE);
     }
