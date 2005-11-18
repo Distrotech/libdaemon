@@ -36,7 +36,7 @@ void daemon_log(int prio, const char* template, ...) {
     va_list arglist;
     va_start(arglist, template);
     if (daemon_log_use & DAEMON_LOG_SYSLOG) {
-	openlog(daemon_log_ident ? daemon_log_ident : "UNKNOWN", LOG_PID|LOG_NDELAY, LOG_DAEMON);
+	openlog(daemon_log_ident ? daemon_log_ident : "UNKNOWN", LOG_PID, LOG_DAEMON);
         vsyslog(prio, template, arglist);
 	closelog();
     }
