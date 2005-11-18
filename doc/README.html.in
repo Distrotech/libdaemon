@@ -26,21 +26,24 @@
 
 <h2><a name="license">License</a></h2>
 
-<p>This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the
-License, or (at your option) any later version.</p>
+<p>This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.</p>
 
-<p>This program is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-General Public License for more details.</p>
+<p>This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.</p>
 
-<p>You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.</p>
+<p>You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA</p>
 
 <h2><a name="news">News</a></h2>
+
+<div class="news-date">Fri Nov 18 2005: </div>
+<p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.9.tar.gz">Version 0.9</a> released; changes include: portability (FreeBSD, NetBSD, OpenBSD, Darwin, Solaris, Cygwin), some minor header file cleanups, fix access mode of PID files, other cleanups</p>
 
 <div class="news-date">Sat Jun 4 2005: </div>
 <p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.8.tar.gz">Version 0.8</a> released; changes include: proper PID file locking</p>
@@ -90,7 +93,15 @@ daemons. It consists of the following parts:</p>
 available. It is not that simple to get it done right and code
 duplication is not a goal.</p>
 
-<p><tt>libdaemon</tt> is currently used by <a href="http://0pointer.de/lennart/projects/ifplugd/"><tt>ifplugd</tt></a>, <a href="http://0pointer.de/lennart/projects/waproamd/"><tt>waproamd</tt></a>, <a href="http://0pointer.de/lennart/projects/ivam2/"><tt>ivam2</tt></a> and <a href="http://0pointer.de/lennart/projects/aeswepd/"><tt>aeswepd</tt></a>.</p>
+<p><tt>libdaemon</tt> is currently used by <a
+href="http://0pointer.de/lennart/projects/ifplugd/"><tt>ifplugd</tt></a>,
+<a
+href="http://freedesktop.org/Software/Avahi">Avahi</a>,
+<a
+href="http://0pointer.de/lennart/projects/ivam2/"><tt>ivam2</tt></a>,
+<a href="http://gentoo.ovibes.net/nautilus-share/mediawiki-1.4.4/index.php/Accueil">Nautilus-Share</a>
+and <a
+href="http://0pointer.de/lennart/projects/aeswepd/"><tt>aeswepd</tt></a>.</p>
 
 <h2><a name="status">Current Status</a></h2>
 
@@ -105,9 +116,11 @@ href="reference/html/index.html">available</a></p>
 
 <p><tt>libdaemon</tt> was developed and tested on Debian GNU/Linux
 "testing" from July 2003, it should work on most other Linux
-distributions (and maybe Unix versions) since it uses GNU Autoconf and
+distributions (and some Unix versions) since it uses GNU Autoconf and
 GNU libtool for source code configuration and shared library
 management.</p>
+
+<p><tt>libdaemon</tt> is known to work on modern Linux systems, FreeBSD, NetBSD, OpenBSD, Darwin, Solaris and Windows/Cygwin.</p>
 
 <h2><a name="installation">Installation</a></h2>
 
@@ -117,24 +130,26 @@ the source tree. After that you should run <tt>make</tt> for
 compilation and <tt>make install</tt> (as root) for installation of
 <tt>libdaemon</tt>.</p>
 
+<p>Please use <tt>gmake</tt> instead of traditional <tt>make</tt> for compilation on non-Linux systems.</p>
+
 <h2><a name="acks">Acknowledgements</a></h2>
 
-<p>No special acknowledgements at this time, I am sorry.</p>
+<p>Sebastien Estienne, for a lot of portability work.</p>
 
 <h2><a name="download">Download</a></h2>
 
 <p>The newest release is always available from <a href="@PACKAGE_URL@">@PACKAGE_URL@</a></p>
 
-<p>Get <tt>libdaemon</tt>'s development sources from the <a href="http://subversion.tigris.org/">Subversion</a> <a href="svn://seth.intheinter.net/libdaemon">repository</a> (<a href="http://0pointer.de/cgi-bin/viewcvs.cgi/?root=libdaemon">viewcvs</a>): </p>
+<p>Get <tt>libdaemon</tt>'s development sources from the <a href="http://subversion.tigris.org/">Subversion</a> <a href="svn://svn.0pointer.de/libdaemon">repository</a> (<a href="http://0pointer.de/cgi-bin/viewcvs.cgi/?root=libdaemon">viewcvs</a>): </p>
 
-<pre>svn checkout svn://seth.intheinter.net/libdaemon/trunk libdaemon</pre>
+<pre>svn checkout svn://svn.0pointer.de/libdaemon/trunk libdaemon</pre>
 
 <p>You may find an up to date Debian package of <tt>libdaemon</tt> on the <a href="http://packages.debian.org/libdaemon0">Debian package repository</a>.</p>
 
 <p>If you want to be notified whenever I release a new version of this software use the subscription feature of <a href="http://freshmeat.net/projects/libdaemon/">Freshmeat</a>.</p>
 
 <hr/>
-<address class="grey">Lennart Poettering &lt;@PACKAGE_BUGREPORT@&gt;, June 2005</address>
+<address class="grey">Lennart Poettering &lt;@PACKAGE_BUGREPORT@&gt;, November 2005</address>
 <div class="grey"><i>$Id$</i></div>
 
 </body>
