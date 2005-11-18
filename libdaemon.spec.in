@@ -6,7 +6,7 @@ Version: @PACKAGE_VERSION@
 Release: 1
 URL: http://www.stud.uni-hamburg.de/users/lennart/projects/libdaemon
 Source: %{name}-%{version}.tar.gz
-License: GPL 
+License: LGPL 
 Group: System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
