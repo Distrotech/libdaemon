@@ -38,7 +38,7 @@ void daemon_log(int prio, const char* template, ...) {
 
     if (daemon_log_use & DAEMON_LOG_SYSLOG) {
 	openlog(daemon_log_ident ? daemon_log_ident : "UNKNOWN", LOG_PID, LOG_DAEMON);
-        vsyslog(prio, template, arglist);
+        vsyslog(prio | LOG_DAEMON, template, arglist);
     }
 
     if (daemon_log_use & DAEMON_LOG_STDERR) {
