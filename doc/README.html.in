@@ -42,6 +42,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA</p>
 
 <h2><a name="news">News</a></h2>
 
+<div class="news-date">Thu Nov 24 2005: </div>
+<p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.10.tar.gz">Version 0.10</a> released; changes include: make logging compatible with daemons running in a <tt>chroot()</tt> environment</p>
+
 <div class="news-date">Fri Nov 18 2005: </div>
 <p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.9.tar.gz">Version 0.9</a> released; changes include: portability (FreeBSD, NetBSD, OpenBSD, Darwin, Solaris, Cygwin); some minor header file cleanups; fix access mode of PID files; other cleanups; license change from GPL to LGPL</p>
 
