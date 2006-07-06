@@ -69,7 +69,7 @@ int daemon_signal_install(int s){
     }
 
     if (sigaddset(&ss, s) < 0) {
-        daemon_log(LOG_ERR, "sigaddyset(): %s", strerror(errno));
+        daemon_log(LOG_ERR, "sigaddset(): %s", strerror(errno));
         return -1;
     }
 
