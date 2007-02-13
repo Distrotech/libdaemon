@@ -184,7 +184,7 @@ int daemon_pid_file_create(void) {
         goto finish;
     
     if ((fd = open(fn, O_CREAT|O_RDWR|O_EXCL, 0644)) < 0) {
-        fprintf(stderr, "open(%s): %s", fn, strerror(errno));
+        daemon_log(LOG_ERR, "open(%s): %s", fn, strerror(errno));
         goto finish;
     }
 
