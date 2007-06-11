@@ -103,6 +103,7 @@ pid_t daemon_pid_file_is_running(void) {
     }
 
     txt[l] = 0;
+    txt[strcspn(txt, "\r\n")] = 0;
 
     errno = 0;
     lpid = strtol(txt, &e, 10);
@@ -111,6 +112,7 @@ pid_t daemon_pid_file_is_running(void) {
     if (errno != 0 || !e || *e || (long) pid != lpid) {
         daemon_log(LOG_WARNING, "PID file corrupt, removing. (%s)", fn);
         unlink(fn);
+        errno = EINVAL;
         goto finish;
     }
 
