@@ -46,11 +46,7 @@ int main(int argc, char *argv[]) {
         /* Kill daemon with SIGINT */
         
         /* Check if the new function daemon_pid_file_kill_wait() is available, if it is, use it. */
-#ifdef DAEMON_PID_FILE_KILL_WAIT_AVAILABLE        
         if ((ret = daemon_pid_file_kill_wait(SIGINT, 5)) < 0)
-#else
-        if ((ret = daemon_pid_file_kill(SIGINT)) < 0)
-#endif
             daemon_log(LOG_WARNING, "Failed to kill daemon");
         
         return ret < 0 ? 1 : 0;
@@ -89,6 +85,11 @@ int main(int argc, char *argv[]) {
         int fd, quit = 0;
         fd_set fds;
 
+        if (daemon_close_all(-1) < 0) {
+            daemon_log(LOG_ERR, "Failed to close all file descriptors: %s", strerror(errno));
+            goto finish;
+        }
+        
         /* Create the PID file */
         if (daemon_pid_file_create() < 0) {
             daemon_log(LOG_ERR, "Could not create PID file (%s).", strerror(errno));
@@ -99,7 +100,7 @@ int main(int argc, char *argv[]) {
         }
 
         /* Initialize signal handling */
-        if (daemon_signal_init(SIGINT, SIGQUIT, SIGHUP, 0) < 0) {
+        if (daemon_signal_init(SIGINT, SIGTERM, SIGQUIT, SIGHUP, 0) < 0) {
             daemon_log(LOG_ERR, "Could not register signal handlers (%s).", strerror(errno));
             daemon_retval_send(2);
             goto finish;
@@ -147,7 +148,8 @@ int main(int argc, char *argv[]) {
 
                     case SIGINT:
                     case SIGQUIT:
-                        daemon_log(LOG_WARNING, "Got SIGINT or SIGQUIT");
+                    case SIGTERM:
+                        daemon_log(LOG_WARNING, "Got SIGINT, SIGQUIT or SIGTERM");
                         quit = 1;
                         break;
 
@@ -163,7 +165,7 @@ int main(int argc, char *argv[]) {
         /* Do a cleanup */
 finish:
         daemon_log(LOG_INFO, "Exiting...");
-
+        daemon_retval_send(-1);
         daemon_signal_done();
         daemon_pid_file_remove();
         
