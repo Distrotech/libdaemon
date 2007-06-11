@@ -111,8 +111,7 @@ int daemon_signal_init(int s, ...) {
     }
             
     va_end(ap);
-
-
+ 
     return r;
 }
 
