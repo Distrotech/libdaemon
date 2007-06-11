@@ -52,7 +52,7 @@ extern enum daemon_log_flags daemon_log_use;
  * to set this to a sensible value or generate your own. */
 extern const char* daemon_log_ident;
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && ! defined(DAEMON_GCC_PRINTF_ATTR)
 /** A macro for making use of GCCs printf compilation warnings */
 #define DAEMON_GCC_PRINTF_ATTR(a,b) __attribute__ ((format (printf, a, b)))
 #else
