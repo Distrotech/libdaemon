@@ -387,7 +387,7 @@ int daemon_close_allv(const int except_fds[]) {
     struct rlimit rl;
     int fd;
     
-#ifdef xxx__linux__
+#ifdef __linux__
 
     DIR *d;
 
