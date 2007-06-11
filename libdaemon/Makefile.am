@@ -38,4 +38,4 @@ libdaemon_la_SOURCES = \
 	daemon.h \
 	$(pkg_include_HEADERS)
 
-libdaemon_la_LDFLAGS = -version-info 2:4:2
+libdaemon_la_LDFLAGS = -version-info 3:0:3
