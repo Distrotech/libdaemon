@@ -39,6 +39,7 @@
 
 #include "dlog.h"
 #include "dsignal.h"
+#include "dfork.h"
 
 #include "dexec.h"
 
@@ -84,6 +85,8 @@ int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap) {
             daemon_log(LOG_ERR, "Unable to open /dev/null as STDIN");
             _exit(EXIT_FAILURE);
         }
+
+        daemon_close_all(-1);
         
 	umask(0022); /* Set up a sane umask */
         

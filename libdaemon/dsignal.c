@@ -50,7 +50,6 @@ static int _init(void) {
 
         if (daemon_nonblock(_signal_pipe[0], 1) < 0 || daemon_nonblock(_signal_pipe[1], 1) < 0)
             return -1;
-
     }
 
     return 0;
@@ -131,8 +130,7 @@ int daemon_signal_next(void) {
 
     if ((r = read(_signal_pipe[0], &s, sizeof(s))) == sizeof(s))
         return s;
-
-
+    
     if (r < 0) {
 
         if (errno == EAGAIN)

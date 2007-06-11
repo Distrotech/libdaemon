@@ -78,9 +78,13 @@ pid_t daemon_pid_file_is_running(void) {
     int fd = -1, locked = -1;
     pid_t ret = (pid_t) -1, pid;
     ssize_t l;
+    long lpid;
+    char *e = NULL;
 
-    if (!(fn = daemon_pid_file_proc()))
+    if (!(fn = daemon_pid_file_proc())) {
+        errno = EINVAL;
         goto finish;
+    }
 
     if ((fd = open(fn, O_RDWR, 0644)) < 0) {
         if (errno != ENOENT)
@@ -99,16 +103,22 @@ pid_t daemon_pid_file_is_running(void) {
     }
 
     txt[l] = 0;
+
+    errno = 0;
+    lpid = strtol(txt, &e, 10);
+    pid = (pid_t) lpid;
     
-    if ((pid = (pid_t) atoi(txt)) <= 0) {
+    if (errno != 0 || !e || *e || (long) pid != lpid) {
         daemon_log(LOG_WARNING, "PID file corrupt, removing. (%s)", fn);
         unlink(fn);
         goto finish;
     }
 
     if (kill(pid, 0) != 0 && errno != EPERM) {
+        int saved_errno = errno;
         daemon_log(LOG_WARNING, "Process %lu died: %s; removing PID file. (%s)", (unsigned long) pid, strerror(errno), fn);
         unlink(fn);
+        errno = saved_errno;
         goto finish;
     }
 
@@ -117,8 +127,10 @@ pid_t daemon_pid_file_is_running(void) {
 finish:
 
     if (fd >= 0) {
+        int saved_errno = errno;
         if (locked >= 0)
             lock_file(fd, 0);
+        errno = saved_errno;
         close(fd);
     }
     
@@ -180,8 +192,10 @@ int daemon_pid_file_create(void) {
 
     u = umask(022);
 
-    if (!(fn = daemon_pid_file_proc()))
+    if (!(fn = daemon_pid_file_proc())) {
+        errno = EINVAL;
         goto finish;
+    }
     
     if ((fd = open(fn, O_CREAT|O_RDWR|O_EXCL, 0644)) < 0) {
         daemon_log(LOG_ERR, "open(%s): %s", fn, strerror(errno));
@@ -189,15 +203,19 @@ int daemon_pid_file_create(void) {
     }
 
     if ((locked = lock_file(fd, 1)) < 0) {
+        int saved_errno = errno;
         unlink(fn);
+        errno = saved_errno;
         goto finish;
     }
 
     snprintf(t, sizeof(t), "%lu\n", (unsigned long) getpid());
 
     if (write(fd, t, l = strlen(t)) != l) {
+        int saved_errno = errno;
         daemon_log(LOG_WARNING, "write(): %s", strerror(errno));
         unlink(fn);
+        errno = saved_errno;
         goto finish;
     }
 
@@ -206,10 +224,13 @@ int daemon_pid_file_create(void) {
 finish:
 
     if (fd >= 0) {
+        int saved_errno = errno;
+        
         if (locked >= 0)
             lock_file(fd, 0);
             
         close(fd);
+        errno = saved_errno;
     }
     
     umask(u);
@@ -220,8 +241,10 @@ finish:
 int daemon_pid_file_remove(void) {
     const char *fn;
     
-    if (!(fn = daemon_pid_file_proc()))
+    if (!(fn = daemon_pid_file_proc())) {
+        errno = EINVAL;
         return -1;
+    }
     
     if (unlink(fn) < 0)
         return -1;

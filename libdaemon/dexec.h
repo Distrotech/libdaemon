@@ -42,7 +42,7 @@ extern "C" {
  * the specified pointer. The calling process is blocked until the
  * child finishes and all child output (either STDOUT or STDIN) has
  * been written to syslog. Running this function requires that
- * daemon_siginal() has been called with SIGCHLD as argument.
+ * daemon_signal() has been called with SIGCHLD as argument.
  * 
  * @param dir Working directory for the process.
  * @param ret A pointer to an integer to write the return value of the program to.

@@ -280,8 +280,10 @@ void daemon_retval_done(void) {
 int daemon_retval_send(int i) {
     ssize_t r;
 
-    if (_daemon_retval_pipe[1] < 0)
+    if (_daemon_retval_pipe[1] < 0) {
+        errno = EINVAL;
         return -1;
+    }
 
     r = atomic_write(_daemon_retval_pipe[1], &i, sizeof(i));
 
@@ -291,8 +293,10 @@ int daemon_retval_send(int i) {
 
         if (r < 0)
             daemon_log(LOG_ERR, "write() failed while writing return value to pipe: %s", strerror(errno));
-        else
+        else {
             daemon_log(LOG_ERR, "write() too short while writing return value from pipe");
+            errno = EINVAL;
+        }
         
         return -1;
     }
@@ -319,8 +323,10 @@ int daemon_retval_wait(int timeout) {
             
             if (s < 0)
                 daemon_log(LOG_ERR, "select() failed while waiting for return value: %s", strerror(errno));
-            else
+            else {
+                errno = ETIMEDOUT;
                 daemon_log(LOG_ERR, "Timeout reached while wating for return value");
+            }
         
             return -1;
         }
@@ -330,10 +336,13 @@ int daemon_retval_wait(int timeout) {
 
         if (r < 0)
             daemon_log(LOG_ERR, "read() failed while reading return value from pipe: %s", strerror(errno));
-        else if (r == 0)
+        else if (r == 0) {
             daemon_log(LOG_ERR, "read() failed with EOF while reading return value from pipe.");
-        else if (r > 0)
+            errno = EINVAL;
+        } else if (r > 0) {
             daemon_log(LOG_ERR, "read() too short while reading return value from pipe.");
+            errno = EINVAL;
+        }
         
         return -1;
     }

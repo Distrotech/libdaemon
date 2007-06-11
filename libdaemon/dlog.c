@@ -26,6 +26,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 
 #include "dlog.h"
 
@@ -33,6 +34,9 @@ enum daemon_log_flags daemon_log_use = DAEMON_LOG_AUTO|DAEMON_LOG_STDERR;
 const char* daemon_log_ident = NULL;
 
 void daemon_logv(int prio, const char* template, va_list arglist) {
+    int saved_errno;
+    
+    saved_errno = errno;
     
     if (daemon_log_use & DAEMON_LOG_SYSLOG) {
 	openlog(daemon_log_ident ? daemon_log_ident : "UNKNOWN", LOG_PID, LOG_DAEMON);
@@ -48,7 +52,8 @@ void daemon_logv(int prio, const char* template, va_list arglist) {
         vfprintf(stdout, template, arglist);
         fprintf(stdout, "\n");
     }
-    
+
+    errno = saved_errno;
 }
 
 void daemon_log(int prio, const char* template, ...) {
