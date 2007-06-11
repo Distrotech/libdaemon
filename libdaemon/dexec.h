@@ -37,6 +37,13 @@ extern "C" {
 /** This variable is defined to 1 iff daemon_exec() is supported.*/
 #define DAEMON_EXEC_AVAILABLE 1
 
+#if defined(__GNUC__) && ! defined(DAEMON_GCC_SENTINEL)
+/** A macro for making use of GCCs printf compilation warnings */
+#define DAEMON_GCC_SENTINEL __attribute__ ((sentinel))
+#else
+#define DAEMON_GCC_SENTINEL
+#endif
+    
 /** Run the specified executable with the specified arguments in the
  * specified directory and return the return value of the program in
  * the specified pointer. The calling process is blocked until the
@@ -50,7 +57,7 @@ extern "C" {
  * @param ... The arguments to be passed to the program, followed by a (char *) NULL
  * @return Nonzero on failure, zero on success
  */
-int daemon_exec(const char *dir, int *ret, const char *prog, ...);
+int daemon_exec(const char *dir, int *ret, const char *prog, ...) DAEMON_GCC_SENTINEL;
 
 /** This variable is defined to 1 iff daemon_execv() is supported.*/
 #define DAEMON_EXECV_AVAILABLE 1
