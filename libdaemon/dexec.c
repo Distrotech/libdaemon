@@ -44,14 +44,13 @@
 
 #define MAX_ARGS 100
 
-int daemon_exec(const char *dir, int *ret, const char *prog, ...) {
+int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap) {
     pid_t pid;
     int p[2];
     unsigned n = 0;
     static char buf[256];
     int sigfd, r;
     fd_set fds;
-    va_list ap;
 
     assert(daemon_signal_fd() >= 0);
 
@@ -93,12 +92,10 @@ int daemon_exec(const char *dir, int *ret, const char *prog, ...) {
             chdir("/");
         }
         
-        va_start(ap, prog);
         for (i = 0; i < MAX_ARGS-1; i++)
             if (!(args[i] = va_arg(ap, char*)))
                 break;
         args[i] = NULL;
-        va_end(ap);
         
         execv(prog, args);
         
@@ -127,7 +124,6 @@ int daemon_exec(const char *dir, int *ret, const char *prog, ...) {
             daemon_log(LOG_ERR, "select() failed: %s", strerror(errno));
             return -1;
         }
-
 
         if (FD_ISSET(p[0], &qfds)) {
             char c;
@@ -189,4 +185,15 @@ int daemon_exec(const char *dir, int *ret, const char *prog, ...) {
             return 0;
         }
     }
+}
+
+int daemon_exec(const char *dir, int *ret, const char *prog, ...) {
+    va_list ap;
+    int r;
+    
+    va_start(ap, prog);
+    r = daemon_execv(dir, ret, prog, ap);
+    va_end(ap);
+
+    return r;
 }

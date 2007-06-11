@@ -23,6 +23,7 @@
  */
 
 #include <syslog.h>
+#include <stdarg.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -63,6 +64,12 @@ extern const char* daemon_log_ident;
  * @param t,... The text message to log
  */
 void daemon_log(int prio, const char* t, ...) DAEMON_GCC_PRINTF_ATTR(2,3);
+
+/** This variable is defined to 1 iff daemon_logv() is supported.*/
+#define DAEMON_LOGV_AVAILABLE 1
+
+/** Same as daemon_logv, but without variadic arguments */
+void daemon_logv(int prio, const char* t, va_list ap);
 
 /** Return a sensible syslog identification for daemon_log_ident
  * generated from argv[0]. This will return a pointer to the file name

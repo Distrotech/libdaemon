@@ -32,10 +32,8 @@
 enum daemon_log_flags daemon_log_use = DAEMON_LOG_AUTO|DAEMON_LOG_STDERR;
 const char* daemon_log_ident = NULL;
 
-void daemon_log(int prio, const char* template, ...) {
-    va_list arglist;
-    va_start(arglist, template);
-
+void daemon_logv(int prio, const char* template, va_list arglist) {
+    
     if (daemon_log_use & DAEMON_LOG_SYSLOG) {
 	openlog(daemon_log_ident ? daemon_log_ident : "UNKNOWN", LOG_PID, LOG_DAEMON);
         vsyslog(prio | LOG_DAEMON, template, arglist);
@@ -50,8 +48,14 @@ void daemon_log(int prio, const char* template, ...) {
         vfprintf(stdout, template, arglist);
         fprintf(stdout, "\n");
     }
-
     
+}
+
+void daemon_log(int prio, const char* template, ...) {
+    va_list arglist;
+    
+    va_start(arglist, template);
+    daemon_logv(prio, template, arglist);
     va_end(arglist);
 }
 

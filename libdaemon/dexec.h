@@ -22,6 +22,8 @@
  * 02110-1301 USA
  */
 
+#include <stdarg.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -50,6 +52,12 @@ extern "C" {
  */
 int daemon_exec(const char *dir, int *ret, const char *prog, ...);
 
+/** This variable is defined to 1 iff daemon_execv() is supported.*/
+#define DAEMON_EXECV_AVAILABLE 1
+
+/** The same as daemon_exec, but without variadic arguments */
+int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap);
+    
 #ifdef __cplusplus
 }
 #endif

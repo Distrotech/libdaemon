@@ -36,6 +36,8 @@
 #include <sys/ioctl.h>
 #include <signal.h>
 #include <sys/time.h>
+#include <sys/resource.h>
+#include <dirent.h>
 
 #include "dfork.h"
 #include "dnonblock.h"
@@ -199,29 +201,28 @@ pid_t daemon_fork(void) {
             goto fail;
 
         } else if (pid == 0) {
-		int tty_fd;
+            int tty_fd;
             /* Second child */
             
             if (daemon_log_use & DAEMON_LOG_AUTO)
                 daemon_log_use = DAEMON_LOG_SYSLOG;
         
-	    signal(SIGTTOU, SIG_IGN);
-	    signal(SIGTTIN, SIG_IGN);
-	    signal(SIGTSTP, SIG_IGN);
-	    
-	    setsid();
-	    setpgid(0,0);
+            signal(SIGTTOU, SIG_IGN);
+            signal(SIGTTIN, SIG_IGN);
+            signal(SIGTSTP, SIG_IGN);
+            
+            setsid();
+            setpgid(0,0);
 #ifdef TIOCNOTTY
-	    if ((tty_fd = open("/dev/tty", O_RDWR)) >= 0) {
-		ioctl(tty_fd, TIOCNOTTY, NULL);
-		close(tty_fd);
-	    }
+            if ((tty_fd = open("/dev/tty", O_RDWR)) >= 0) {
+                ioctl(tty_fd, TIOCNOTTY, NULL);
+                close(tty_fd);
+            }
 #endif
             dpid = getpid();
             if (atomic_write(pipe_fds[1], &dpid, sizeof(dpid)) != sizeof(dpid))
                 goto fail;
             close(pipe_fds[1]);
-
 
             return 0;
 
@@ -278,6 +279,9 @@ void daemon_retval_done(void) {
 
 int daemon_retval_send(int i) {
     ssize_t r;
+
+    if (_daemon_retval_pipe[1] < 0)
+        return -1;
 
     r = atomic_write(_daemon_retval_pipe[1], &i, sizeof(i));
 
@@ -339,3 +343,117 @@ int daemon_retval_wait(int timeout) {
     return i;
 }
 
+int daemon_close_all(int except_fd, ...) {
+    va_list original_ap, ap;
+    int n, i, r;
+    int *p;
+
+    va_start(original_ap, except_fd);
+    va_copy(ap, original_ap);
+
+    for (n = 0; va_arg(ap, int) >= 0; n++)
+        ;
+
+    va_end(ap);
+
+    if (!(p = malloc(sizeof(int) * (n+1)))) {
+        va_end(original_ap);
+        return -1;
+    }
+
+    i = 0;
+    while ((p[i++] = va_arg(original_ap, int)) >= 0)
+        ;
+
+    p[i] = -1;
+    
+    r = daemon_close_allv(p);
+    free(p);
+    
+    return r;
+}
+
+/** Same as daemon_close_all but takes an array of fds, terminated by -1 */
+int daemon_close_allv(const int except_fds[]) {
+    struct rlimit rl;
+    int fd;
+    
+#ifdef xxx__linux__
+
+    DIR *d;
+
+    if ((d = opendir("/proc/self/fd"))) {
+
+        struct dirent *de;
+
+        while ((de = readdir(d))) {
+            long l;
+            char *e = NULL;
+            int i, fd;
+
+            if (de->d_name[0] == '.')
+                continue;
+            
+            errno = 0;
+            l = strtol(de->d_name, &e, 10);
+            if (errno != 0 || !e || *e) {
+                closedir(d);
+                errno = EINVAL;
+                return -1;
+            }
+
+            fd = (int) l;
+
+            if ((long) fd != l) {
+                closedir(d);
+                errno = EINVAL;
+                return -1;
+            }
+
+            if (fd <= 3)
+                continue;
+            
+            if (fd == dirfd(d))
+                continue;
+
+            if (fd == _daemon_retval_pipe[1])
+                continue;
+
+            for (i = 0; except_fds[i] >= 0; i++)
+                if (except_fds[i] == fd)
+                    continue;
+
+            if (close(fd) < 0) {
+                closedir(d);
+                return -1;
+            }
+        }
+        
+        closedir(d);
+        return 0;
+    }
+    
+#endif
+
+    if (getrlimit(RLIMIT_NOFILE, &rl) < 0)
+        return -1;
+
+    for (fd = 0; fd < (int) rl.rlim_max; fd++) {
+        int i;
+
+        if (fd <= 3)
+            continue;
+        
+        if (fd == _daemon_retval_pipe[1])
+            continue;
+        
+        for (i = 0; except_fds[i] >= 0; i++) 
+            if (except_fds[i] == fd)
+                continue;
+
+        if (close(fd) < 0 && errno != EBADF)
+            return -1;
+    }
+
+    return 0;
+}

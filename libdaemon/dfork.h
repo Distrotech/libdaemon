@@ -27,7 +27,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
 /** \mainpage libdaemon
  *
  * libdaemon
@@ -99,6 +99,13 @@ int daemon_retval_wait(int timeout);
  * @return Zero on success, nonzero on failure.
  */
 int daemon_retval_send(int s);
+
+/** Close all file descriptors except those passed. List needs to be
+ * terminated by -1. FDs 0, 1, 2 will be kept open anyway. */
+int daemon_close_all(int except_fd, ...);
+
+/** Same as daemon_close_all but takes an array of fds, terminated by -1 */
+int daemon_close_allv(const int except_fds[]);
 
 #ifdef __cplusplus
 }
