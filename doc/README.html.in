@@ -42,6 +42,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA</p>
 
 <h2><a name="news">News</a></h2>
 
+<div class="news-date">Fri Jun 22 2007: </div>
+<p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.11.tar.gz">Version 0.11</a> released; changes include: automatically detect whether lynx is installed; properly set <tt>errno</tt> on every error condition; add new function <tt>daemon_close_all()</tt> to close all open file descriptors except a given set; add <tt>daemon_logv()</tt>, which is identical to <tt>daemon_log()</tt>, but takes a <tt>va_list</tt> argument; add <tt>daemon_execv()</tt> in similar style; other fixes</p>
+
 <div class="news-date">Thu Nov 24 2005: </div>
 <p class="news-text"><a href="@PACKAGE_URL@libdaemon-0.10.tar.gz">Version 0.10</a> released; changes include: make logging compatible with daemons running in a <tt>chroot()</tt> environment</p>
 
@@ -152,7 +155,7 @@ compilation and <tt>make install</tt> (as root) for installation of
 <p>If you want to be notified whenever I release a new version of this software use the subscription feature of <a href="http://freshmeat.net/projects/libdaemon/">Freshmeat</a>.</p>
 
 <hr/>
-<address class="grey">Lennart Poettering &lt;@PACKAGE_BUGREPORT@&gt;, November 2005</address>
+<address class="grey">Lennart Poettering &lt;@PACKAGE_BUGREPORT@&gt;, June 2007</address>
 <div class="grey"><i>$Id$</i></div>
 
 </body>
