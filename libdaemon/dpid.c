@@ -44,6 +44,10 @@
 #define ETIME ETIMEDOUT /* For FreeBSD */
 #endif
 
+#ifndef PATH_MAX
+#define PATH_MAX 512
+#endif
+
 #define VARRUN "/var/run"
 
 const char *daemon_pid_file_ident = NULL;
