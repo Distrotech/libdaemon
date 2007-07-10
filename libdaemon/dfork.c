@@ -354,14 +354,15 @@ int daemon_retval_wait(int timeout) {
 
 int daemon_close_all(int except_fd, ...) {
     va_list original_ap, ap;
-    int n, i, r;
+    int n = 0, i, r;
     int *p;
 
     va_start(original_ap, except_fd);
     va_copy(ap, original_ap);
 
-    for (n = 0; va_arg(ap, int) >= 0; n++)
-        ;
+    if (except_fd >= 0)
+        for (n = 1; va_arg(ap, int) >= 0; n++)
+            ;
 
     va_end(ap);
 
@@ -371,9 +372,12 @@ int daemon_close_all(int except_fd, ...) {
     }
 
     i = 0;
-    while ((p[i++] = va_arg(original_ap, int)) >= 0)
-        ;
-
+    if (except_fd >= 0) {
+        p[i++] = except_fd;
+        
+        while ((p[i++] = va_arg(original_ap, int)) >= 0)
+            ;
+    }
     p[i] = -1;
     
     r = daemon_close_allv(p);
