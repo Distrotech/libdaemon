@@ -69,6 +69,14 @@ static int lock_file(int fd, int enable) {
     f.l_len = 0;
     
     if (fcntl(fd, F_SETLKW, &f) < 0) {
+
+        if (enable && errno == EBADF) {
+            f.l_type = F_RDLCK;
+
+            if (fcntl(fd, F_SETLKW, &f) >= 0)
+                return 0;
+        }
+        
         daemon_log(LOG_WARNING, "fcntl(F_SETLKW) failed: %s", strerror(errno));
         return -1;
     }
@@ -91,10 +99,12 @@ pid_t daemon_pid_file_is_running(void) {
     }
 
     if ((fd = open(fn, O_RDWR, 0644)) < 0) {
-        if (errno != ENOENT)
-            daemon_log(LOG_WARNING, "Failed to open PID file: %s", strerror(errno));
+        if ((fd = open(fn, O_RDONLY, 0644)) < 0) {
+            if (errno != ENOENT)
+                daemon_log(LOG_WARNING, "Failed to open PID file: %s", strerror(errno));
 
-        goto finish;
+            goto finish;
+        }
     }
 
     if ((locked = lock_file(fd, 1)) < 0)
