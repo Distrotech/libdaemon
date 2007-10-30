@@ -37,7 +37,9 @@
 static int _signal_pipe[2] = { -1, -1 };
 
 static void _sigfunc(int s) {
+    int saved_errno = errno;
     write(_signal_pipe[1], &s, sizeof(s));
+    errno = saved_errno;
 }
 
 static int _init(void) {
