@@ -68,7 +68,10 @@ void daemon_log(int prio, const char* t, ...) DAEMON_GCC_PRINTF_ATTR(2,3);
 /** This variable is defined to 1 iff daemon_logv() is supported.*/
 #define DAEMON_LOGV_AVAILABLE 1
 
-/** Same as daemon_logv, but without variadic arguments */
+/** Same as daemon_log(), but without variadic arguments
+ * @since 0.11
+ * @see DAEMON_LOGV_AVAILABLE
+ */
 void daemon_logv(int prio, const char* t, va_list ap);
 
 /** Return a sensible syslog identification for daemon_log_ident
