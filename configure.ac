@@ -91,22 +91,22 @@ AC_TYPE_SIZE_T
 
 # LYNX documentation generation
 AC_ARG_ENABLE(lynx,
-        AS_HELP_STRING(--disable-lynx,Turn off lynx usage for documentation generation),
+        AC_HELP_STRING(--disable-lynx,Turn off lynx usage for documentation generation),
 [case "${enableval}" in
   yes) lynx=yes ;;
   no)  lynx=no ;;
   *) AC_MSG_ERROR(bad value ${enableval} for --disable-lynx) ;;
 esac],[lynx=yes])
 
-if test x$lynx != xno ; then
+if test x$lynx = xyes ; then
    AC_CHECK_PROG(have_lynx, lynx, yes, no)
 
-   if test x$lynx = xyes && test x$have_lynx = xno ; then
-     AC_MSG_ERROR([*** Lynx enabled but couldn't find lynx ***])
+   if test x$have_lynx = xno ; then
+     AC_MSG_WARN([*** lynx not found, plain text README will not be built ***])
    fi
 fi
 
-AM_CONDITIONAL([USE_LYNX], [test "x$lynx" != xno])
+AM_CONDITIONAL([USE_LYNX], [test "x$lynx" = xyes])
 
 AC_CONFIG_FILES([libdaemon/Makefile Makefile doc/Makefile doc/README.html doc/doxygen.conf examples/Makefile libdaemon.spec libdaemon.pc])
 AC_OUTPUT
