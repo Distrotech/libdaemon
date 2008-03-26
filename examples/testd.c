@@ -44,11 +44,11 @@ int main(int argc, char *argv[]) {
         int ret;
 
         /* Kill daemon with SIGINT */
-        
+
         /* Check if the new function daemon_pid_file_kill_wait() is available, if it is, use it. */
         if ((ret = daemon_pid_file_kill_wait(SIGINT, 5)) < 0)
             daemon_log(LOG_WARNING, "Failed to kill daemon");
-        
+
         return ret < 0 ? 1 : 0;
     }
 
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
     if ((pid = daemon_pid_file_is_running()) >= 0) {
         daemon_log(LOG_ERR, "Daemon already running on PID file %u", pid);
         return 1;
-        
+
     }
 
     /* Prepare for return value passing from the initialization procedure of the daemon process */
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
         /* Exit on error */
         daemon_retval_done();
         return 1;
-        
+
     } else if (pid) { /* The parent */
         int ret;
 
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
 
         daemon_log(ret != 0 ? LOG_ERR : LOG_INFO, "Daemon returned %i as return value.", ret);
         return ret;
-        
+
     } else { /* The daemon */
         int fd, quit = 0;
         fd_set fds;
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
             daemon_log(LOG_ERR, "Failed to close all file descriptors: %s", strerror(errno));
             goto finish;
         }
-        
+
         /* Create the PID file */
         if (daemon_pid_file_create() < 0) {
             daemon_log(LOG_ERR, "Could not create PID file (%s).", strerror(errno));
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
             daemon_retval_send(2);
             goto finish;
         }
-        
+
         /*... do some further init work here */
 
 
@@ -117,8 +117,9 @@ int main(int argc, char *argv[]) {
 
         /* Prepare for select() on the signal fd */
         FD_ZERO(&fds);
-        FD_SET(fd = daemon_signal_fd(), &fds);
-        
+        fd = daemon_signal_fd();
+        FD_SET(fd, &fds);
+
         while (!quit) {
             fd_set fds2 = fds;
 
@@ -128,7 +129,7 @@ int main(int argc, char *argv[]) {
                 /* If we've been interrupted by an incoming signal, continue */
                 if (errno == EINTR)
                     continue;
-                
+
                 daemon_log(LOG_ERR, "select(): %s", strerror(errno));
                 break;
             }
@@ -168,7 +169,7 @@ finish:
         daemon_retval_send(-1);
         daemon_signal_done();
         daemon_pid_file_remove();
-        
+
         return 0;
     }
 }
