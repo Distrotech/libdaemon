@@ -54,8 +54,15 @@ const char *daemon_pid_file_ident = NULL;
 daemon_pid_file_proc_t daemon_pid_file_proc = daemon_pid_file_proc_default;
 
 const char *daemon_pid_file_proc_default(void) {
+#ifdef HAVE_ASPRINTF
+    static char *fn = NULL;
+    free(fn);
+    asprintf(&fn,  "%s/%s.pid", VARRUN, daemon_pid_file_ident ? daemon_pid_file_ident : "unknown");
+#else
     static char fn[PATH_MAX];
     snprintf(fn, sizeof(fn), "%s/%s.pid", VARRUN, daemon_pid_file_ident ? daemon_pid_file_ident : "unknown");
+#endif
+
     return fn;
 }
 
@@ -67,7 +74,7 @@ static int lock_file(int fd, int enable) {
     f.l_whence = SEEK_SET;
     f.l_start = 0;
     f.l_len = 0;
-    
+
     if (fcntl(fd, F_SETLKW, &f) < 0) {
 
         if (enable && errno == EBADF) {
@@ -76,7 +83,7 @@ static int lock_file(int fd, int enable) {
             if (fcntl(fd, F_SETLKW, &f) >= 0)
                 return 0;
         }
-        
+
         daemon_log(LOG_WARNING, "fcntl(F_SETLKW) failed: %s", strerror(errno));
         return -1;
     }
@@ -109,7 +116,7 @@ pid_t daemon_pid_file_is_running(void) {
 
     if ((locked = lock_file(fd, 1)) < 0)
         goto finish;
-    
+
     if ((l = read(fd, txt, sizeof(txt)-1)) < 0) {
         daemon_log(LOG_WARNING, "read(): %s", strerror(errno));
         unlink(fn);
@@ -122,7 +129,7 @@ pid_t daemon_pid_file_is_running(void) {
     errno = 0;
     lpid = strtol(txt, &e, 10);
     pid = (pid_t) lpid;
-    
+
     if (errno != 0 || !e || *e || (long) pid != lpid) {
         daemon_log(LOG_WARNING, "PID file corrupt, removing. (%s)", fn);
         unlink(fn);
@@ -139,7 +146,7 @@ pid_t daemon_pid_file_is_running(void) {
     }
 
     ret = pid;
-    
+
 finish:
 
     if (fd >= 0) {
@@ -149,13 +156,13 @@ finish:
         errno = saved_errno;
         close(fd);
     }
-    
+
     return ret;
 }
 
 int daemon_pid_file_kill(int s) {
     pid_t pid;
-    
+
     if ((pid = daemon_pid_file_is_running()) < 0)
         return -1;
 
@@ -168,7 +175,7 @@ int daemon_pid_file_kill(int s) {
 int daemon_pid_file_kill_wait(int s, int m) {
     pid_t pid;
     time_t t;
-    
+
     if ((pid = daemon_pid_file_is_running()) < 0)
         return -1;
 
@@ -185,7 +192,7 @@ int daemon_pid_file_kill_wait(int s, int m) {
             errno = ETIME;
             return -1;
         }
-            
+
         if ((r = kill(pid, 0)) < 0 && errno != ESRCH)
             return -1;
 
@@ -212,7 +219,7 @@ int daemon_pid_file_create(void) {
         errno = EINVAL;
         goto finish;
     }
-    
+
     if ((fd = open(fn, O_CREAT|O_RDWR|O_EXCL, 0644)) < 0) {
         daemon_log(LOG_ERR, "open(%s): %s", fn, strerror(errno));
         goto finish;
@@ -241,30 +248,29 @@ finish:
 
     if (fd >= 0) {
         int saved_errno = errno;
-        
+
         if (locked >= 0)
             lock_file(fd, 0);
-            
+
         close(fd);
         errno = saved_errno;
     }
-    
+
     umask(u);
-    
+
     return ret;
 }
 
 int daemon_pid_file_remove(void) {
     const char *fn;
-    
+
     if (!(fn = daemon_pid_file_proc())) {
         errno = EINVAL;
         return -1;
     }
-    
+
     if (unlink(fn) < 0)
         return -1;
 
     return 0;
 }
-

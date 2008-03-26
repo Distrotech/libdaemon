@@ -83,7 +83,7 @@ AC_C_VOLATILE
 AC_FUNC_FORK
 AC_FUNC_SELECT_ARGTYPES
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([select strerror dup2 memset strrchr])
+AC_CHECK_FUNCS([select strerror dup2 memset strrchr asprintf])
 AC_TYPE_MODE_T
 AC_FUNC_SETPGRP
 AC_TYPE_SIGNAL
