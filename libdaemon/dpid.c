@@ -48,7 +48,7 @@
 #define PATH_MAX 512
 #endif
 
-#define VARRUN "/var/run"
+#define VARRUN LOCALSTATEDIR "/run"
 
 const char *daemon_pid_file_ident = NULL;
 daemon_pid_file_proc_t daemon_pid_file_proc = daemon_pid_file_proc_default;

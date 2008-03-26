@@ -17,6 +17,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
 # USA
 
+AM_CPPFLAGS='-DLOCALSTATEDIR="$(localstatedir)"'
+
 pkginclude_HEADERS = \
 	dlog.h \
 	dfork.h \
