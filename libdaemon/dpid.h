@@ -30,7 +30,7 @@ extern "C" {
 
 /** \file
  *
- * Contains an API for manipulating PID files. 
+ * Contains an API for manipulating PID files.
  */
 
 /** Prototype of a function for generating the name of a PID file.
@@ -66,7 +66,7 @@ int daemon_pid_file_create(void);
  */
 int daemon_pid_file_remove(void);
 
-/** Returns the PID file of a running daemon, if available 
+/** Returns the PID file of a running daemon, if available
  * @return The PID or negative on failure
  */
 pid_t daemon_pid_file_is_running(void);
@@ -77,14 +77,14 @@ pid_t daemon_pid_file_is_running(void);
  */
 int daemon_pid_file_kill(int s);
 
-/** If this variable is defined to 1 iff daemon_pid_file_kill_wait() is supported.*/
+/** This variable is defined to 1 iff daemon_pid_file_kill_wait() is supported.*/
 #define DAEMON_PID_FILE_KILL_WAIT_AVAILABLE 1
 
 /** Similar to daemon_pid_file_kill() but waits until the process
  * died.  This functions is new in libdaemon 0.3. The macro
  * DAEMON_PID_FILE_KILL_WAIT_AVAILABLE is defined iff libdaemon
  * supports this function.
- * 
+ *
  * @param s The signal to send
  * @param m Seconds to wait at maximum
  * @return zero on success, nonzero on failure (timeout condition is considered a failure)
