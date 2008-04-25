@@ -36,6 +36,18 @@
 int main(int argc, char *argv[]) {
     pid_t pid;
 
+    /* Reset signal handlers */
+    if (daemon_reset_sigs(-1) < 0) {
+        daemon_log(LOG_ERR, "Failed to reset all signal handlers: %s", strerror(errno));
+        return 1;
+    }
+
+    /* Unblock signals */
+    if (daemon_unblock_sigs(-1) < 0) {
+        daemon_log(LOG_ERR, "Failed to unblock all signals: %s", strerror(errno));
+        return 1;
+    }
+
     /* Set indetification string for the daemon for both syslog and PID file */
     daemon_pid_file_ident = daemon_log_ident = daemon_ident_from_argv0(argv[0]);
 
@@ -47,7 +59,7 @@ int main(int argc, char *argv[]) {
 
         /* Check if the new function daemon_pid_file_kill_wait() is available, if it is, use it. */
         if ((ret = daemon_pid_file_kill_wait(SIGINT, 5)) < 0)
-            daemon_log(LOG_WARNING, "Failed to kill daemon");
+            daemon_log(LOG_WARNING, "Failed to kill daemon: %s", strerror(errno));
 
         return ret < 0 ? 1 : 0;
     }
@@ -56,7 +68,6 @@ int main(int argc, char *argv[]) {
     if ((pid = daemon_pid_file_is_running()) >= 0) {
         daemon_log(LOG_ERR, "Daemon already running on PID file %u", pid);
         return 1;
-
     }
 
     /* Prepare for return value passing from the initialization procedure of the daemon process */
@@ -74,7 +85,7 @@ int main(int argc, char *argv[]) {
 
         /* Wait for 20 seconds for the return value passed from the daemon process */
         if ((ret = daemon_retval_wait(20)) < 0) {
-            daemon_log(LOG_ERR, "Could not recieve return value from daemon process.");
+            daemon_log(LOG_ERR, "Could not recieve return value from daemon process: %s", strerror(errno));
             return 255;
         }
 
@@ -85,24 +96,26 @@ int main(int argc, char *argv[]) {
         int fd, quit = 0;
         fd_set fds;
 
+        /* Close FDs */
         if (daemon_close_all(-1) < 0) {
             daemon_log(LOG_ERR, "Failed to close all file descriptors: %s", strerror(errno));
-            goto finish;
-        }
-
-        /* Create the PID file */
-        if (daemon_pid_file_create() < 0) {
-            daemon_log(LOG_ERR, "Could not create PID file (%s).", strerror(errno));
 
             /* Send the error condition to the parent process */
             daemon_retval_send(1);
             goto finish;
         }
 
+        /* Create the PID file */
+        if (daemon_pid_file_create() < 0) {
+            daemon_log(LOG_ERR, "Could not create PID file (%s).", strerror(errno));
+            daemon_retval_send(2);
+            goto finish;
+        }
+
         /* Initialize signal handling */
         if (daemon_signal_init(SIGINT, SIGTERM, SIGQUIT, SIGHUP, 0) < 0) {
             daemon_log(LOG_ERR, "Could not register signal handlers (%s).", strerror(errno));
-            daemon_retval_send(2);
+            daemon_retval_send(3);
             goto finish;
         }
 
@@ -113,7 +126,6 @@ int main(int argc, char *argv[]) {
         daemon_retval_send(0);
 
         daemon_log(LOG_INFO, "Sucessfully started");
-
 
         /* Prepare for select() on the signal fd */
         FD_ZERO(&fds);
@@ -140,7 +152,7 @@ int main(int argc, char *argv[]) {
 
                 /* Get signal */
                 if ((sig = daemon_signal_next()) <= 0) {
-                    daemon_log(LOG_ERR, "daemon_signal_next() failed.");
+                    daemon_log(LOG_ERR, "daemon_signal_next() failed: %s", strerror(errno));
                     break;
                 }
 
@@ -166,7 +178,7 @@ int main(int argc, char *argv[]) {
         /* Do a cleanup */
 finish:
         daemon_log(LOG_INFO, "Exiting...");
-        daemon_retval_send(-1);
+        daemon_retval_send(255);
         daemon_signal_done();
         daemon_pid_file_remove();
 
