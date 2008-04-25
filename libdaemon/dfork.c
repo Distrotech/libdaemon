@@ -50,7 +50,7 @@ static int _null_open(int f, int fd) {
 
     if ((fd2 = open("/dev/null", f)) < 0)
         return -1;
-    
+
     if (fd2 == fd)
         return fd;
 
@@ -63,10 +63,10 @@ static int _null_open(int f, int fd) {
 
 static ssize_t atomic_read(int fd, void *d, size_t l) {
     ssize_t t = 0;
-    
+
     while (l > 0) {
         ssize_t r;
-        
+
         if ((r = read(fd, d, l)) <= 0) {
 
             if (r < 0)
@@ -85,10 +85,10 @@ static ssize_t atomic_read(int fd, void *d, size_t l) {
 
 static ssize_t atomic_write(int fd, const void *d, size_t l) {
     ssize_t t = 0;
-    
+
     while (l > 0) {
         ssize_t r;
-        
+
         if ((r = write(fd, d, l)) <= 0) {
 
             if (r < 0)
@@ -107,7 +107,7 @@ static ssize_t atomic_write(int fd, const void *d, size_t l) {
 
 static int move_fd_up(int *fd) {
     assert(fd);
-    
+
     while (*fd <= 2) {
         if ((*fd = dup(*fd)) < 0) {
             daemon_log(LOG_ERR, "dup(): %s", strerror(errno));
@@ -126,11 +126,12 @@ pid_t daemon_fork(void) {
     int pipe_fds[2] = {-1, -1};
     struct sigaction sa_old, sa_new;
     sigset_t ss_old, ss_new;
+    int saved_errno;
 
     memset(&sa_new, 0, sizeof(sa_new));
     sa_new.sa_handler = sigchld;
     sa_new.sa_flags = SA_RESTART;
-    
+
     if (sigaction(SIGCHLD, &sa_new, &sa_old) < 0) {
         daemon_log(LOG_ERR, "sigaction() failed: %s", strerror(errno));
         return (pid_t) -1;
@@ -138,36 +139,59 @@ pid_t daemon_fork(void) {
 
     sigemptyset(&ss_new);
     sigaddset(&ss_new, SIGCHLD);
-    
+
     if (sigprocmask(SIG_UNBLOCK, &ss_new, &ss_old) < 0) {
         daemon_log(LOG_ERR, "sigprocmask() failed: %s", strerror(errno));
+
+        saved_errno = errno;
         sigaction(SIGCHLD, &sa_old, NULL);
+        errno = saved_errno;
+
         return (pid_t) -1;
     }
-    
+
     if (pipe(pipe_fds) < 0) {
         daemon_log(LOG_ERR, "pipe() failed: %s", strerror(errno));
+
+        saved_errno = errno;
         sigaction(SIGCHLD, &sa_old, NULL);
         sigprocmask(SIG_SETMASK, &ss_old, NULL);
+        errno = saved_errno;
+
         return (pid_t) -1;
     }
 
     if ((pid = fork()) < 0) { /* First fork */
         daemon_log(LOG_ERR, "First fork() failed: %s", strerror(errno));
+
+        saved_errno = errno;
         close(pipe_fds[0]);
         close(pipe_fds[1]);
         sigaction(SIGCHLD, &sa_old, NULL);
         sigprocmask(SIG_SETMASK, &ss_old, NULL);
+        errno = saved_errno;
+
         return (pid_t) -1;
 
     } else if (pid == 0) {
         pid_t dpid;
-        
+
         /* First child */
 
-        sigaction(SIGCHLD, &sa_old, NULL);
-        sigprocmask(SIG_SETMASK, &ss_old, NULL);
-        close(pipe_fds[0]);
+        if (sigaction(SIGCHLD, &sa_old, NULL) < 0) {
+            daemon_log(LOG_ERR, "close() failed: %s", strerror(errno));
+            goto fail;
+        }
+
+        if (sigprocmask(SIG_SETMASK, &ss_old, NULL) < 0) {
+            daemon_log(LOG_ERR, "sigprocmask() failed: %s", strerror(errno));
+            goto fail;
+        }
+
+        if (close(pipe_fds[0]) < 0) {
+            daemon_log(LOG_ERR, "close() failed: %s", strerror(errno));
+            goto fail;
+        }
 
         /* Move file descriptors up*/
         if (move_fd_up(&pipe_fds[1]) < 0)
@@ -176,17 +200,17 @@ pid_t daemon_fork(void) {
             goto fail;
         if (_daemon_retval_pipe[1] >= 0 && move_fd_up(&_daemon_retval_pipe[1]) < 0)
             goto fail;
-            
+
         if (_null_open(O_RDONLY, 0) < 0) {
             daemon_log(LOG_ERR, "Failed to open /dev/null for STDIN: %s", strerror(errno));
             goto fail;
         }
-        
+
         if (_null_open(O_WRONLY, 1) < 0) {
             daemon_log(LOG_ERR, "Failed to open /dev/null for STDOUT: %s", strerror(errno));
             goto fail;
         }
-        
+
         if (_null_open(O_WRONLY, 2) < 0) {
             daemon_log(LOG_ERR, "Failed to open /dev/null for STDERR: %s", strerror(errno));
             goto fail;
@@ -194,7 +218,11 @@ pid_t daemon_fork(void) {
 
         setsid();
         umask(0777);
-        chdir("/");
+
+        if (chdir("/") < 0) {
+            daemon_log(LOG_ERR, "umask() failed: %s", strerror(errno));
+            goto fail;
+        }
 
         if ((pid = fork()) < 0) { /* Second fork */
             daemon_log(LOG_ERR, "Second fork() failed: %s", strerror(errno));
@@ -203,16 +231,25 @@ pid_t daemon_fork(void) {
         } else if (pid == 0) {
             int tty_fd;
             /* Second child */
-            
-            if (daemon_log_use & DAEMON_LOG_AUTO)
-                daemon_log_use = DAEMON_LOG_SYSLOG;
-        
-            signal(SIGTTOU, SIG_IGN);
-            signal(SIGTTIN, SIG_IGN);
-            signal(SIGTSTP, SIG_IGN);
-            
+
+            if (signal(SIGTTOU, SIG_IGN) == SIG_ERR) {
+                daemon_log(LOG_ERR, "signal(SIGTTOU, SIG_IGN) failed: %s", strerror(errno));
+                goto fail;
+            }
+
+            if (signal(SIGTTIN, SIG_IGN) == SIG_ERR) {
+                daemon_log(LOG_ERR, "signal(SIGTTIN, SIG_IGN) failed: %s", strerror(errno));
+                goto fail;
+            }
+
+            if (signal(SIGTSTP, SIG_IGN) == SIG_ERR) {
+                daemon_log(LOG_ERR, "signal(SIGTSTP, SIG_IGN) failed: %s", strerror(errno));
+                goto fail;
+            }
+
             setsid();
-            setpgid(0,0);
+            setpgid(0, 0);
+
 #ifdef TIOCNOTTY
             if ((tty_fd = open("/dev/tty", O_RDWR)) >= 0) {
                 ioctl(tty_fd, TIOCNOTTY, NULL);
@@ -220,9 +257,18 @@ pid_t daemon_fork(void) {
             }
 #endif
             dpid = getpid();
-            if (atomic_write(pipe_fds[1], &dpid, sizeof(dpid)) != sizeof(dpid))
+            if (atomic_write(pipe_fds[1], &dpid, sizeof(dpid)) != sizeof(dpid)) {
+                daemon_log(LOG_ERR, "write() failed: %s", strerror(errno));
                 goto fail;
-            close(pipe_fds[1]);
+            }
+
+            if (close(pipe_fds[1]) < 0) {
+                daemon_log(LOG_ERR, "close() failed: %s", strerror(errno));
+                goto fail;
+            }
+
+            if (daemon_log_use & DAEMON_LOG_AUTO)
+                daemon_log_use = DAEMON_LOG_SYSLOG;
 
             return 0;
 
@@ -231,11 +277,12 @@ pid_t daemon_fork(void) {
             close(pipe_fds[1]);
             _exit(0);
         }
-            
+
     fail:
         dpid = (pid_t) -1;
         if (atomic_write(pipe_fds[1], &dpid, sizeof(dpid)) != sizeof(dpid))
-            daemon_log(LOG_ERR, "Failed to write error PID.");
+            daemon_log(LOG_ERR, "Failed to write error PID: %s", strerror(errno));
+
         close(pipe_fds[1]);
         _exit(0);
 
@@ -245,7 +292,7 @@ pid_t daemon_fork(void) {
 
         close(pipe_fds[1]);
         waitpid(pid, NULL, WUNTRACED);
-        
+
         sigprocmask(SIG_SETMASK, &ss_old, NULL);
         sigaction(SIGCHLD, &sa_old, NULL);
 
@@ -257,7 +304,6 @@ pid_t daemon_fork(void) {
         close(pipe_fds[0]);
         return dpid;
     }
-
 }
 
 int daemon_retval_init(void) {
@@ -270,7 +316,7 @@ int daemon_retval_init(void) {
 void daemon_retval_done(void) {
     if (_daemon_retval_pipe[0] >= 0)
         close(_daemon_retval_pipe[0]);
-    
+
     if (_daemon_retval_pipe[1] >= 0)
         close(_daemon_retval_pipe[1]);
 
@@ -297,7 +343,7 @@ int daemon_retval_send(int i) {
             daemon_log(LOG_ERR, "write() too short while writing return value from pipe");
             errno = EINVAL;
         }
-        
+
         return -1;
     }
 
@@ -315,19 +361,19 @@ int daemon_retval_wait(int timeout) {
 
         tv.tv_sec = timeout;
         tv.tv_usec = 0;
-        
+
         FD_ZERO(&fds);
         FD_SET(_daemon_retval_pipe[0], &fds);
 
         if ((s = select(FD_SETSIZE, &fds, 0, 0, &tv)) != 1) {
-            
+
             if (s < 0)
                 daemon_log(LOG_ERR, "select() failed while waiting for return value: %s", strerror(errno));
             else {
                 errno = ETIMEDOUT;
                 daemon_log(LOG_ERR, "Timeout reached while wating for return value");
             }
-        
+
             return -1;
         }
     }
@@ -343,22 +389,22 @@ int daemon_retval_wait(int timeout) {
             daemon_log(LOG_ERR, "read() too short while reading return value from pipe.");
             errno = EINVAL;
         }
-        
+
         return -1;
     }
 
     daemon_retval_done();
-    
+
     return i;
 }
 
 int daemon_close_all(int except_fd, ...) {
-    va_list original_ap, ap;
+    va_list ap;
     int n = 0, i, r;
     int *p;
+    int saved_errno;
 
-    va_start(original_ap, except_fd);
-    va_copy(ap, original_ap);
+    va_start(ap, except_fd);
 
     if (except_fd >= 0)
         for (n = 1; va_arg(ap, int) >= 0; n++)
@@ -366,23 +412,28 @@ int daemon_close_all(int except_fd, ...) {
 
     va_end(ap);
 
-    if (!(p = malloc(sizeof(int) * (n+1)))) {
-        va_end(original_ap);
+    if (!(p = malloc(sizeof(int) * (n+1))))
         return -1;
-    }
+
+    va_start(ap, except_fd);
 
     i = 0;
     if (except_fd >= 0) {
         p[i++] = except_fd;
-        
-        while ((p[i++] = va_arg(original_ap, int)) >= 0)
+
+        while ((p[i++] = va_arg(ap, int)) >= 0)
             ;
     }
     p[i] = -1;
-    
+
+    va_end(ap);
+
     r = daemon_close_allv(p);
+
+    saved_errno = errno;
     free(p);
-    
+    errno = saved_errno;
+
     return r;
 }
 
@@ -390,7 +441,8 @@ int daemon_close_all(int except_fd, ...) {
 int daemon_close_allv(const int except_fds[]) {
     struct rlimit rl;
     int fd;
-    
+    int saved_errno;
+
 #ifdef __linux__
 
     DIR *d;
@@ -406,7 +458,7 @@ int daemon_close_allv(const int except_fds[]) {
 
             if (de->d_name[0] == '.')
                 continue;
-            
+
             errno = 0;
             l = strtol(de->d_name, &e, 10);
             if (errno != 0 || !e || *e) {
@@ -425,7 +477,7 @@ int daemon_close_allv(const int except_fds[]) {
 
             if (fd <= 3)
                 continue;
-            
+
             if (fd == dirfd(d))
                 continue;
 
@@ -437,15 +489,18 @@ int daemon_close_allv(const int except_fds[]) {
                     continue;
 
             if (close(fd) < 0) {
+                saved_errno = errno;
                 closedir(d);
+                errno = saved_errno;
+
                 return -1;
             }
         }
-        
+
         closedir(d);
         return 0;
     }
-    
+
 #endif
 
     if (getrlimit(RLIMIT_NOFILE, &rl) < 0)
@@ -456,16 +511,149 @@ int daemon_close_allv(const int except_fds[]) {
 
         if (fd <= 3)
             continue;
-        
+
         if (fd == _daemon_retval_pipe[1])
             continue;
-        
-        for (i = 0; except_fds[i] >= 0; i++) 
+
+        for (i = 0; except_fds[i] >= 0; i++)
             if (except_fds[i] == fd)
                 continue;
 
         if (close(fd) < 0 && errno != EBADF)
             return -1;
+    }
+
+    return 0;
+}
+
+int daemon_unblock_sigs(int except, ...) {
+    va_list ap;
+    int n = 0, i, r;
+    int *p;
+    int saved_errno;
+
+    va_start(ap, except);
+
+    if (except >= 1)
+        for (n = 1; va_arg(ap, int) >= 0; n++)
+            ;
+
+    va_end(ap);
+
+    if (!(p = malloc(sizeof(int) * (n+1))))
+        return -1;
+
+    va_start(ap, except);
+
+    i = 0;
+    if (except >= 1) {
+        p[i++] = except;
+
+        while ((p[i++] = va_arg(ap, int)) >= 0)
+            ;
+    }
+    p[i] = -1;
+
+    va_end(ap);
+
+    r = daemon_unblock_sigsv(p);
+
+    saved_errno = errno;
+    free(p);
+    errno = saved_errno;
+
+    return r;
+}
+
+int daemon_unblock_sigsv(const int except[]) {
+    int i;
+    sigset_t ss;
+
+    if (sigemptyset(&ss) < 0)
+        return -1;
+
+    for (i = 0; except[i] > 0; i++)
+        if (sigaddset(&ss, except[i]) < 0)
+            return -1;
+
+    return sigprocmask(SIG_SETMASK, &ss, NULL);
+}
+
+int daemon_reset_sigs(int except, ...) {
+    va_list ap;
+    int n = 0, i, r;
+    int *p;
+    int saved_errno;
+
+    va_start(ap, except);
+
+    if (except >= 1)
+        for (n = 1; va_arg(ap, int) >= 0; n++)
+            ;
+
+    va_end(ap);
+
+    if (!(p = malloc(sizeof(int) * (n+1))))
+        return -1;
+
+    va_start(ap, except);
+
+    i = 0;
+    if (except >= 1) {
+        p[i++] = except;
+
+        while ((p[i++] = va_arg(ap, int)) >= 0)
+            ;
+    }
+    p[i] = -1;
+
+    va_end(ap);
+
+    r = daemon_reset_sigsv(p);
+
+    saved_errno = errno;
+    free(p);
+    errno = saved_errno;
+
+    return r;
+}
+
+int daemon_reset_sigsv(const int except[]) {
+    int sig;
+
+    for (sig = 1; sig < _NSIG; sig++) {
+        int reset = 1;
+
+        switch (sig) {
+            case SIGKILL:
+            case SIGSTOP:
+                reset = 0;
+                break;
+
+            default: {
+                int i;
+
+                for (i = 0; except[i] > 0; i++) {
+                    if (sig == except[i]) {
+                        reset = 0;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (reset) {
+            struct sigaction sa;
+
+            memset(&sa, 0, sizeof(sa));
+            sa.sa_handler = SIG_DFL;
+
+            /* On Linux the first two RT signals are reserved by
+             * glibc, and sigaction() will return EINVAL for them. */
+            if ((sigaction(sig, &sa, NULL) < 0))
+                if (errno != EINVAL)
+                    return -1;
+        }
     }
 
     return 0;
