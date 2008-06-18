@@ -51,6 +51,8 @@ else
 
     test "x$LIBTOOLIZE" = "x" && LIBTOOLIZE=libtoolize
 
+    mkdir -p common
+
     run_versioned "$LIBTOOLIZE" 1.5 -c --force
     run_versioned aclocal "$VERSION" -I common
     run_versioned autoconf 2.59 -Wall
