@@ -131,13 +131,20 @@ pid_t daemon_fork(void) {
     sa_new.sa_handler = sigchld;
     sa_new.sa_flags = SA_RESTART;
 
+    if (sigemptyset(&ss_new) < 0) {
+        daemon_log(LOG_ERR, "sigemptyset() failed: %s", strerror(errno));
+        return (pid_t) -1;
+    }
+
+    if (sigaddset(&ss_new, SIGCHLD) < 0) {
+        daemon_log(LOG_ERR, "sigaddset() failed: %s", strerror(errno));
+        return (pid_t) -1;
+    }
+
     if (sigaction(SIGCHLD, &sa_new, &sa_old) < 0) {
         daemon_log(LOG_ERR, "sigaction() failed: %s", strerror(errno));
         return (pid_t) -1;
     }
-
-    sigemptyset(&ss_new);
-    sigaddset(&ss_new, SIGCHLD);
 
     if (sigprocmask(SIG_UNBLOCK, &ss_new, &ss_old) < 0) {
         daemon_log(LOG_ERR, "sigprocmask() failed: %s", strerror(errno));
