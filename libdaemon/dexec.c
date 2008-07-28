@@ -182,7 +182,6 @@ int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap) {
             if (sig != SIGCHLD) {
                 daemon_log(LOG_WARNING, "Killing child.");
                 kill(pid, SIGTERM);
-                break;
             }
         }
     }
