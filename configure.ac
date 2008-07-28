@@ -112,5 +112,5 @@ fi
 
 AM_CONDITIONAL([USE_LYNX], [test "x$lynx" = xyes])
 
-AC_CONFIG_FILES([libdaemon/Makefile Makefile doc/Makefile doc/README.html doc/doxygen.conf examples/Makefile libdaemon.spec libdaemon.pc])
+AC_CONFIG_FILES([libdaemon/Makefile Makefile doc/Makefile doc/README.html doc/doxygen.conf examples/Makefile libdaemon.pc])
 AC_OUTPUT
