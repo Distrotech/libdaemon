@@ -21,7 +21,7 @@
 
 AC_PREREQ(2.59)
 
-AC_INIT([libdaemon],[0.12],[mzqnrzba (at) 0pointer (dot) de])
+AC_INIT([libdaemon],[0.13],[mzqnrzba (at) 0pointer (dot) de])
 AC_CONFIG_SRCDIR([libdaemon/dfork.c])
 AC_CONFIG_HEADERS([config.h])
 
@@ -29,7 +29,7 @@ AM_INIT_AUTOMAKE([foreign 1.9 -Wall])
 
 AC_SUBST(PACKAGE_URL, [http://0pointer.de/lennart/projects/libdaemon/])
 
-AC_SUBST(LIBDAEMON_VERSION_INFO, [3:1:3])
+AC_SUBST(LIBDAEMON_VERSION_INFO, [4:0:4])
 
 if type -p stow > /dev/null && test -d /usr/local/stow ; then
    AC_MSG_NOTICE([*** Found /usr/local/stow: default install prefix set to /usr/local/stow/${PACKAGE_NAME}-${PACKAGE_VERSION} ***])
