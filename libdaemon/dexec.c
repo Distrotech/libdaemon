@@ -50,6 +50,7 @@ int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap) {
     static char buf[256];
     int sigfd, r;
     fd_set fds;
+    int saved_errno;
 
     assert(daemon_signal_fd() >= 0);
 
@@ -60,6 +61,12 @@ int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap) {
 
     if ((pid = fork()) < 0) {
         daemon_log(LOG_ERR, "fork() failed: %s", strerror(errno));
+
+        saved_errno = errno;
+        close(p[0]);
+        close(p[1]);
+        errno = saved_errno;
+
         return -1;
 
     } else if (pid == 0) {
@@ -102,6 +109,8 @@ int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap) {
 
         daemon_log(LOG_ERR, "execv(%s) failed: %s", prog, strerror(errno));
 
+    fail:
+
         _exit(EXIT_FAILURE);
     }
 
@@ -123,6 +132,10 @@ int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap) {
                 continue;
 
             daemon_log(LOG_ERR, "select() failed: %s", strerror(errno));
+
+            saved_errno = errno;
+            close(p[0]);
+            errno = saved_errno;
             return -1;
         }
 
@@ -150,8 +163,10 @@ int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap) {
             int sig;
 
             if ((sig = daemon_signal_next()) < 0) {
-                daemon_log(LOG_ERR, "daemon_signal_next(): %s", strerror(errno));
-                break;
+                saved_errno = errno;
+                close(p[0]);
+                errno = saved_errno;
+                return -1;
             }
 
             if (sig != SIGCHLD) {
