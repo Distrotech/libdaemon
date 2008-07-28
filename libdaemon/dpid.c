@@ -140,7 +140,7 @@ pid_t daemon_pid_file_is_running(void) {
 
     if (kill(pid, 0) != 0 && errno != EPERM) {
         int saved_errno = errno;
-        daemon_log(LOG_WARNING, "Process %lu died: %s; removing PID file. (%s)", (unsigned long) pid, strerror(errno), fn);
+        daemon_log(LOG_WARNING, "Process %lu died: %s; trying to remove PID file. (%s)", (unsigned long) pid, strerror(errno), fn);
         unlink(fn);
         errno = saved_errno;
         goto finish;
