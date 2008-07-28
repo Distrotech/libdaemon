@@ -298,7 +298,15 @@ pid_t daemon_fork(void) {
         pid_t dpid;
 
         close(pipe_fds[1]);
-        waitpid(pid, NULL, WUNTRACED);
+
+        if (waitpid(pid, NULL, WUNTRACED) < 0) {
+            saved_errno = errno;
+            close(pipe_fds[0]);
+            sigaction(SIGCHLD, &sa_old, NULL);
+            sigprocmask(SIG_SETMASK, &ss_old, NULL);
+            errno = saved_errno;
+            return -1;
+        }
 
         sigprocmask(SIG_SETMASK, &ss_old, NULL);
         sigaction(SIGCHLD, &sa_old, NULL);
