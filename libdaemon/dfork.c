@@ -447,10 +447,11 @@ int daemon_close_all(int except_fd, ...) {
 
     i = 0;
     if (except_fd >= 0) {
+        int fd;
         p[i++] = except_fd;
 
-        while ((p[i++] = va_arg(ap, int)) >= 0)
-            ;
+        while ((fd = va_arg(ap, int)) >= 0)
+            p[i++] = fd;
     }
     p[i] = -1;
 
@@ -480,9 +481,10 @@ int daemon_close_allv(const int except_fds[]) {
         struct dirent *de;
 
         while ((de = readdir(d))) {
+            int found;
             long l;
             char *e = NULL;
-            int i, fd;
+            int i;
 
             if (de->d_name[0] == '.')
                 continue;
@@ -512,9 +514,15 @@ int daemon_close_allv(const int except_fds[]) {
             if (fd == _daemon_retval_pipe[1])
                 continue;
 
+            found = 0;
             for (i = 0; except_fds[i] >= 0; i++)
-                if (except_fds[i] == fd)
-                    continue;
+                if (except_fds[i] == fd) {
+                    found = 1;
+                    break;
+                }
+
+            if (found)
+                continue;
 
             if (close(fd) < 0) {
                 saved_errno = errno;
@@ -535,7 +543,7 @@ int daemon_close_allv(const int except_fds[]) {
         return -1;
 
     for (fd = 0; fd < (int) rl.rlim_max; fd++) {
-        int i;
+        int i, found;
 
         if (fd <= 3)
             continue;
@@ -543,9 +551,15 @@ int daemon_close_allv(const int except_fds[]) {
         if (fd == _daemon_retval_pipe[1])
             continue;
 
+        found = 0;
         for (i = 0; except_fds[i] >= 0; i++)
-            if (except_fds[i] == fd)
-                continue;
+            if (except_fds[i] == fd) {
+                found = 1;
+                break;
+            }
+
+        if (found)
+            continue;
 
         if (close(fd) < 0 && errno != EBADF)
             return -1;
@@ -575,10 +589,11 @@ int daemon_unblock_sigs(int except, ...) {
 
     i = 0;
     if (except >= 1) {
+        int sig;
         p[i++] = except;
 
-        while ((p[i++] = va_arg(ap, int)) >= 0)
-            ;
+        while ((sig = va_arg(ap, int)) >= 0)
+            p[i++] = sig;
     }
     p[i] = -1;
 
@@ -628,10 +643,11 @@ int daemon_reset_sigs(int except, ...) {
 
     i = 0;
     if (except >= 1) {
+        int sig;
         p[i++] = except;
 
-        while ((p[i++] = va_arg(ap, int)) >= 0)
-            ;
+        while ((sig = va_arg(ap, int)) >= 0)
+            p[i++] = sig;
     }
     p[i] = -1;
 
