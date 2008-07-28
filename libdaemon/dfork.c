@@ -325,8 +325,14 @@ pid_t daemon_fork(void) {
 }
 
 int daemon_retval_init(void) {
-    if (pipe(_daemon_retval_pipe) < 0)
-        return -1;
+
+    if (_daemon_retval_pipe[0] < 0 || _daemon_retval_pipe[1] < 0) {
+
+        if (pipe(_daemon_retval_pipe) < 0) {
+            daemon_log(LOG_ERR, "pipe(): %s", strerror(errno));
+            return -1;
+        }
+    }
 
     return 0;
 }
