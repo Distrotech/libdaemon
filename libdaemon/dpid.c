@@ -164,7 +164,7 @@ finish:
 int daemon_pid_file_kill(int s) {
     pid_t pid;
 
-    if ((pid = daemon_pid_file_is_running()) < 0)
+    if ((pid = daemon_pid_file_is_running()) == (pid_t) -1)
         return -1;
 
     if (kill(pid, s) < 0)
