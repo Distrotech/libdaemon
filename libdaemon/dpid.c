@@ -117,8 +117,10 @@ pid_t daemon_pid_file_is_running(void) {
         goto finish;
 
     if ((l = read(fd, txt, sizeof(txt)-1)) < 0) {
+        int saved_errno = errno;
         daemon_log(LOG_WARNING, "read(): %s", strerror(errno));
         unlink(fn);
+        errno = saved_errno;
         goto finish;
     }
 
@@ -152,8 +154,8 @@ finish:
         int saved_errno = errno;
         if (locked >= 0)
             lock_file(fd, 0);
-        errno = saved_errno;
         close(fd);
+        errno = saved_errno;
     }
 
     return ret;
