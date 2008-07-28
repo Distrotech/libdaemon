@@ -39,10 +39,9 @@
 #include "dlog.h"
 #include "dsignal.h"
 #include "dfork.h"
-
 #include "dexec.h"
 
-#define MAX_ARGS 100
+#define MAX_ARGS 64
 
 int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap) {
     pid_t pid;
