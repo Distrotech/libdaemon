@@ -27,17 +27,18 @@
 #include "dnonblock.h"
 
 int daemon_nonblock(int fd, int b) {
-    int a;
+    int a, c;
+
     if ((a = fcntl(fd, F_GETFL)) < 0)
         return -1;
 
     if (b)
-        a |= O_NDELAY;
+        c = a | O_NDELAY;
     else
-        a &= ~O_NDELAY;
+        c = a & ~O_NDELAY;
 
-    if (fcntl(fd, F_SETFL, a) < 0)
-        return -1;
+    if (c == a)
+        return 0;
 
-    return 0;
+    return fcntl(fd, F_SETFL, a);
 }
