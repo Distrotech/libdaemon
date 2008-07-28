@@ -270,8 +270,5 @@ int daemon_pid_file_remove(void) {
         return -1;
     }
 
-    if (unlink(fn) < 0)
-        return -1;
-
-    return 0;
+    return unlink(fn);
 }
