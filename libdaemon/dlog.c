@@ -38,7 +38,7 @@ void daemon_logv(int prio, const char* template, va_list arglist) {
     saved_errno = errno;
 
     if (daemon_log_use & DAEMON_LOG_SYSLOG) {
-	openlog(daemon_log_ident ? daemon_log_ident : "UNKNOWN", LOG_PID, LOG_DAEMON);
+        openlog(daemon_log_ident ? daemon_log_ident : "UNKNOWN", LOG_PID, LOG_DAEMON);
         vsyslog(prio | LOG_DAEMON, template, arglist);
     }
 
