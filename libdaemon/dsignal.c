@@ -95,19 +95,17 @@ int daemon_signal_install(int s){
 
 int daemon_signal_init(int s, ...) {
     int sig, r = 0;
-
     va_list ap;
-    va_start(ap, s);
 
     if (_init() < 0)
         return -1;
 
+    va_start(ap, s);
+
     sig = s;
     while (sig > 0) {
-        if (daemon_signal_install(sig) < 0) {
-            r = -1;
+        if ((r = daemon_signal_install(sig)) < 0)
             break;
-        }
 
         sig = va_arg(ap, int);
     }
