@@ -316,7 +316,10 @@ pid_t daemon_fork(void) {
             dpid = (pid_t) -1;
         }
 
+        saved_errno = errno;
         close(pipe_fds[0]);
+        errno = saved_errno;
+
         return dpid;
     }
 }
@@ -329,6 +332,8 @@ int daemon_retval_init(void) {
 }
 
 void daemon_retval_done(void) {
+    int saved_errno = errno;
+
     if (_daemon_retval_pipe[0] >= 0)
         close(_daemon_retval_pipe[0]);
 
@@ -336,6 +341,8 @@ void daemon_retval_done(void) {
         close(_daemon_retval_pipe[1]);
 
     _daemon_retval_pipe[0] = _daemon_retval_pipe[1] = -1;
+
+    errno = saved_errno;
 }
 
 int daemon_retval_send(int i) {
