@@ -17,14 +17,14 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
 # USA
 
-EXTRA_DIST=bootstrap.sh LICENSE libdaemon.spec
+EXTRA_DIST=bootstrap.sh LICENSE
 SUBDIRS=libdaemon doc examples
-
-MAINTAINERCLEANFILES = libdaemon.spec
-noinst_DATA = libdaemon.spec
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libdaemon.pc
+
+noinst_DATA =
+MAINTAINERCLEANFILES=
 
 if USE_LYNX
 noinst_DATA += README
@@ -34,7 +34,7 @@ MAINTAINERCLEANFILES += README
 README:
 	rm -f README
 	$(MAKE) -C doc README
-	ln -s doc/README README
+	cd $(srcdir) && ln -s doc/README README
 endif
 
 doxygen:
@@ -48,7 +48,4 @@ homepage: dist doxygen
 	ln -sf README.html $$HOME/homepage/private/projects/libdaemon/index.html
 	cp -av doc/reference/ $$HOME/homepage/private/projects/libdaemon/
 
-distcleancheck:
-	@:
-
-.PHONY: homepage distcleancheck
+.PHONY: homepage doxygen

@@ -21,12 +21,16 @@
 # USA
 
 AC_PREREQ(2.59)
+
 AC_INIT([libdaemon],[0.12],[mzqnrzba (at) 0pointer (dot) de])
 AC_CONFIG_SRCDIR([libdaemon/dfork.c])
 AC_CONFIG_HEADERS([config.h])
+
 AM_INIT_AUTOMAKE([foreign 1.9 -Wall])
 
 AC_SUBST(PACKAGE_URL, [http://0pointer.de/lennart/projects/libdaemon/])
+
+AC_SUBST(LIBDAEMON_VERSION_INFO, [3:1:3])
 
 if type -p stow > /dev/null && test -d /usr/local/stow ; then
    AC_MSG_NOTICE([*** Found /usr/local/stow: default install prefix set to /usr/local/stow/${PACKAGE_NAME}-${PACKAGE_VERSION} ***])
@@ -40,32 +44,30 @@ AC_PROG_CXX
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 
+test_gcc_flag() {
+    AC_LANG_CONFTEST([int main(int argc, char*argv[]) {}])
+    $CC -c conftest.c $CFLAGS "$1" -o conftest.o > /dev/null 2> /dev/null
+    ret=$?
+    rm -f conftest.o
+    return $ret
+}
+
 # If using GCC specify some additional parameters
 if test "x$GCC" = "xyes" ; then
-   CFLAGS="$CFLAGS -pipe -W -Wall -pedantic"
+    # We use gnu99 instead of c99 because many have interpreted the standard
+    # in a way that int64_t isn't defined on non-64 bit platforms.
+    DESIRED_FLAGS="-std=gnu99 -Wall -W -Wextra -pedantic -pipe -Wformat -Wold-style-definition -Wdeclaration-after-statement -Wfloat-equal -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -Wmissing-noreturn -Wshadow -Wendif-labels -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wno-unused-parameter -ffast-math"
 
-   # Test whether sys/signal.h can be included when compiled with -std=c99
-   AC_MSG_CHECKING([checking whether sys/signal.h can be included with -std=c99])
-   OLDCFLAGS="$CFLAGS"
-   CFLAGS="-std=c99"
-   AC_TRY_COMPILE([#include <sys/signal.h>],
-                   [int main(void) {
-                   struct sigaction sa; 
-                   sa.sa_handler = 0;
-		   return 0;
-		   };], use_stdc99=yes, use_stdc99=no)
-
-   if test x"$use_stdc99" = xyes; then
-      CFLAGS="-std=c99 $OLDCFLAGS"
-      AC_MSG_RESULT([yes])
-   else
-      AC_MSG_RESULT([no])
-      CFLAGS="$OLDCFLAGS"
-   fi
-
-   AC_LANG_CONFTEST([int main() {}])
-   $CC -c conftest.c -Wno-unused-parameter $CFLAGS > /dev/null 2> /dev/null && CFLAGS="$CFLAGS -Wno-unused-parameter"
-   rm -f conftest.o
+    for flag in $DESIRED_FLAGS ; do
+        AC_MSG_CHECKING([whether $CC accepts $flag])
+        if test_gcc_flag $flag ; then
+           CFLAGS="$CFLAGS $flag"
+           CXXFLAGS="$CXXFLAGS $flag"
+           AC_MSG_RESULT([yes])
+        else
+           AC_MSG_RESULT([no])
+        fi
+    done
 fi
 
 # Checks for header files.
@@ -88,6 +90,8 @@ AC_TYPE_MODE_T
 AC_FUNC_SETPGRP
 AC_TYPE_SIGNAL
 AC_TYPE_SIZE_T
+
+AC_SYS_LARGEFILE
 
 # LYNX documentation generation
 AC_ARG_ENABLE(lynx,
