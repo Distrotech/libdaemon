@@ -100,6 +100,8 @@ int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap) {
         }
 
         daemon_close_all(-1);
+        daemon_reset_sigs(-1);
+        daemon_unblock_sigs(-1);
 
 	umask(0022); /* Set up a sane umask */
 
