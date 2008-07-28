@@ -1,3 +1,5 @@
+*~
+config.rpath
 Makefile
 Makefile.in
 *.lo
