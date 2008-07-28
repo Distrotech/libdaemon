@@ -116,6 +116,8 @@ int daemon_signal_init(int s, ...) {
 }
 
 void daemon_signal_done(void) {
+    int saved_errno = errno;
+
     if (_signal_pipe[0] != -1)
         close(_signal_pipe[0]);
 
@@ -123,6 +125,8 @@ void daemon_signal_done(void) {
         close(_signal_pipe[1]);
 
     _signal_pipe[0] = _signal_pipe[1] = -1;
+
+    errno = saved_errno;
 }
 
 int daemon_signal_next(void) {
