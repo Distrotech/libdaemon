@@ -148,7 +148,7 @@ compilation and <tt>make install</tt> (as root) for installation of
 
 <p>The newest release is always available from <a href="@PACKAGE_URL@">@PACKAGE_URL@</a></p>
 
-<p>Get <tt>libdaemon</tt>'s development sources from the <a href="http://git.or.cz/">GIT</a> <a href="git://git.0pointer.de/libdaemon">repository</a> (<a href="http://git.0pointer.de/?p=libasyncns.git">gitweb</a>): </p>
+<p>Get <tt>libdaemon</tt>'s development sources from the <a href="http://git.or.cz/">GIT</a> <a href="git://git.0pointer.de/libdaemon">repository</a> (<a href="http://git.0pointer.de/?p=libdaemon.git">gitweb</a>): </p>
 
 <pre>git clone git://git.0pointer.de/libdaemon</pre>
 
