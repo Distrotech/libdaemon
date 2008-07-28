@@ -49,8 +49,10 @@ static int _init(void) {
             return -1;
         }
 
-        if (daemon_nonblock(_signal_pipe[0], 1) < 0 || daemon_nonblock(_signal_pipe[1], 1) < 0)
+        if (daemon_nonblock(_signal_pipe[0], 1) < 0 || daemon_nonblock(_signal_pipe[1], 1) < 0) {
+            daemon_signal_done();
             return -1;
+        }
     }
 
     return 0;
