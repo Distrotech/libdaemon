@@ -183,16 +183,8 @@ pid_t daemon_fork(void) {
         pid_t dpid;
 
         /* First child */
-
-        if (sigaction(SIGCHLD, &sa_old, NULL) < 0) {
-            daemon_log(LOG_ERR, "close() failed: %s", strerror(errno));
-            goto fail;
-        }
-
-        if (sigprocmask(SIG_SETMASK, &ss_old, NULL) < 0) {
-            daemon_log(LOG_ERR, "sigprocmask() failed: %s", strerror(errno));
-            goto fail;
-        }
+        if (daemon_log_use & DAEMON_LOG_AUTO)
+            daemon_log_use = DAEMON_LOG_SYSLOG;
 
         if (close(pipe_fds[0]) < 0) {
             daemon_log(LOG_ERR, "close() failed: %s", strerror(errno));
@@ -223,10 +215,11 @@ pid_t daemon_fork(void) {
         }
 
         setsid();
+        setpgid(0, 0);
         umask(0777);
 
         if (chdir("/") < 0) {
-            daemon_log(LOG_ERR, "umask() failed: %s", strerror(errno));
+            daemon_log(LOG_ERR, "chdir() failed: %s", strerror(errno));
             goto fail;
         }
 
@@ -237,6 +230,16 @@ pid_t daemon_fork(void) {
         } else if (pid == 0) {
             int tty_fd;
             /* Second child */
+
+            if (sigaction(SIGCHLD, &sa_old, NULL) < 0) {
+                daemon_log(LOG_ERR, "close() failed: %s", strerror(errno));
+                goto fail;
+            }
+
+            if (sigprocmask(SIG_SETMASK, &ss_old, NULL) < 0) {
+                daemon_log(LOG_ERR, "sigprocmask() failed: %s", strerror(errno));
+                goto fail;
+            }
 
             if (signal(SIGTTOU, SIG_IGN) == SIG_ERR) {
                 daemon_log(LOG_ERR, "signal(SIGTTOU, SIG_IGN) failed: %s", strerror(errno));
@@ -273,9 +276,6 @@ pid_t daemon_fork(void) {
                 goto fail;
             }
 
-            if (daemon_log_use & DAEMON_LOG_AUTO)
-                daemon_log_use = DAEMON_LOG_SYSLOG;
-
             return 0;
 
         } else {
@@ -286,6 +286,7 @@ pid_t daemon_fork(void) {
 
     fail:
         dpid = (pid_t) -1;
+
         if (atomic_write(pipe_fds[1], &dpid, sizeof(dpid)) != sizeof(dpid))
             daemon_log(LOG_ERR, "Failed to write error PID: %s", strerror(errno));
 
