@@ -74,10 +74,17 @@ int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap) {
         int i;
 
         if (p[1] != 1)
-            dup2(p[1], 1);
+            if (dup2(p[1], 1) < 0) {
+                daemon_log(LOG_ERR, "dup2: %s", strerror(errno));
+                goto fail;
+            }
 
         if (p[1] != 2)
-            dup2(p[1], 2);
+            if (dup2(p[1], 2) < 0) {
+                daemon_log(LOG_ERR, "dup2: %s", strerror(errno));
+                goto fail;
+            }
+
 
         if (p[0] > 2)
             close(p[0]);
@@ -86,9 +93,10 @@ int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap) {
             close(p[1]);
 
         close(0);
+
         if (open("/dev/null", O_RDONLY) != 0) {
             daemon_log(LOG_ERR, "Unable to open /dev/null as STDIN");
-            _exit(EXIT_FAILURE);
+            goto fail;
         }
 
         daemon_close_all(-1);
@@ -192,8 +200,10 @@ int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap) {
             daemon_log(LOG_ERR, "waitpid(): %s", strerror(errno));
             return -1;
         } else {
-            if (!WIFEXITED(r))
+            if (!WIFEXITED(r)) {
+                errno = ECANCELED;
                 return -1;
+            }
 
             if (ret)
                 *ret = WEXITSTATUS(r);
