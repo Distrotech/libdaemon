@@ -17,7 +17,11 @@
 # <http://www.gnu.org/licenses/>.
 
 EXTRA_DIST=bootstrap.sh LICENSE
-SUBDIRS=libdaemon doc examples
+SUBDIRS=libdaemon doc
+
+if EXAMPLES
+SUBDIRS += examples
+endif
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libdaemon.pc

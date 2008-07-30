@@ -111,5 +111,10 @@ fi
 
 AM_CONDITIONAL([USE_LYNX], [test "x$lynx" = xyes])
 
+AC_ARG_ENABLE(examples,
+       AS_HELP_STRING([--disable-examples], [Don't build examples during make]),,
+       enable_examples="yes")
+AM_CONDITIONAL(EXAMPLES, [test "$enable_examples" = "yes"])
+
 AC_CONFIG_FILES([libdaemon/Makefile Makefile doc/Makefile doc/README.html doc/doxygen.conf examples/Makefile libdaemon.pc])
 AC_OUTPUT
