@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
             }
 
             /* Check if a signal has been recieved */
-            if (FD_ISSET(fd, &fds)) {
+            if (FD_ISSET(fd, &fds2)) {
                 int sig;
 
                 /* Get signal */
