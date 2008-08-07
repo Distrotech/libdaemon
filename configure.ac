@@ -19,7 +19,7 @@
 # License along with libdaemon. If not, see
 # <http://www.gnu.org/licenses/>.
 
-AC_PREREQ(2.59)
+AC_PREREQ(2.62)
 
 AC_INIT([libdaemon],[0.13],[mzqnrzba (at) 0pointer (dot) de])
 AC_CONFIG_SRCDIR([libdaemon/dfork.c])
