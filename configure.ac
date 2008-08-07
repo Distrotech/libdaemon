@@ -70,6 +70,7 @@ if test "x$GCC" = "xyes" ; then
 fi
 
 # Checks for header files.
+AC_HEADER_ASSERT
 AC_HEADER_STDC
 AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h string.h syslog.h unistd.h sys/ioctl.h sys/time.h])
 AC_HEADER_SYS_WAIT
