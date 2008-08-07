@@ -26,18 +26,17 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libdaemon.pc
 
-noinst_DATA =
+dist_noinst_DATA =
 MAINTAINERCLEANFILES=
 
 if USE_LYNX
-noinst_DATA += README
-EXTRA_DIST += README
+dist_noinst_DATA += README
 MAINTAINERCLEANFILES += README
 
 README:
 	rm -f README
 	$(MAKE) -C doc README
-	cd $(srcdir) && ln -s doc/README README
+	ln -s doc/README README
 endif
 
 doxygen:
