@@ -16,8 +16,8 @@
 # License along with libdaemon. If not, see
 # <http://www.gnu.org/licenses/>.
 
-noinst_DATA = README.html
-EXTRA_DIST = $(noinst_DATA) style.css README.html.in
+dist_html_DATA = README.html style.css
+EXTRA_DIST = README.html.in
 
 MAINTAINERCLEANFILES = README.html
 CLEANFILES =
@@ -29,7 +29,7 @@ maintainer-clean-local:
 	rm -rf reference
 
 if USE_LYNX
-noinst_DATA += README
+dist_doc_DATA = README
 MAINTAINERCLEANFILES += README
 README: README.html
 	lynx --dump $^ | sed 's,file://localhost/.*/doc/README.html,README,' | sed 's,file://localhost/.*/doc/reference/,reference/,' > $@
