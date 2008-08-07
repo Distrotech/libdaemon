@@ -38,7 +38,7 @@ fi
 
 # Checks for programs.
 AC_PROG_CC
-AC_GNU_SOURCE
+AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_CXX
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
@@ -94,7 +94,7 @@ AC_SYS_LARGEFILE
 
 # LYNX documentation generation
 AC_ARG_ENABLE(lynx,
-        AC_HELP_STRING(--disable-lynx,Turn off lynx usage for documentation generation),
+        AS_HELP_STRING([--disable-lynx],[Turn off lynx usage for documentation generation]),
 [case "${enableval}" in
   yes) lynx=yes ;;
   no)  lynx=no ;;
