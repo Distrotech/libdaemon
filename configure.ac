@@ -39,6 +39,7 @@ fi
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_CC_C99 dnl This enable gnu99 if present
 AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_CXX
 AC_PROG_MAKE_SET
@@ -54,9 +55,7 @@ test_gcc_flag() {
 
 # If using GCC specify some additional parameters
 if test "x$GCC" = "xyes" ; then
-    # We use gnu99 instead of c99 because many have interpreted the standard
-    # in a way that int64_t isn't defined on non-64 bit platforms.
-    DESIRED_FLAGS="-std=gnu99 -Wall -W -Wextra -pedantic -pipe -Wformat -Wold-style-definition -Wdeclaration-after-statement -Wfloat-equal -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -Wmissing-noreturn -Wshadow -Wendif-labels -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wno-unused-parameter -ffast-math"
+    DESIRED_FLAGS="-Wall -W -Wextra -pedantic -pipe -Wformat -Wold-style-definition -Wdeclaration-after-statement -Wfloat-equal -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -Wmissing-noreturn -Wshadow -Wendif-labels -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wno-unused-parameter -ffast-math"
 
     for flag in $DESIRED_FLAGS ; do
         AC_MSG_CHECKING([whether $CC accepts $flag])
