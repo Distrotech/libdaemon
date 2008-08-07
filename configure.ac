@@ -24,6 +24,7 @@ AC_PREREQ(2.62)
 AC_INIT([libdaemon],[0.13],[mzqnrzba (at) 0pointer (dot) de])
 AC_CONFIG_SRCDIR([libdaemon/dfork.c])
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([foreign 1.9 -Wall])
 

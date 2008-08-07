@@ -16,6 +16,8 @@
 # License along with libdaemon. If not, see
 # <http://www.gnu.org/licenses/>.
 
+ACLOCAL_AMFLAGS = -I m4
+
 EXTRA_DIST=bootstrap.sh LICENSE
 SUBDIRS=libdaemon doc
 
