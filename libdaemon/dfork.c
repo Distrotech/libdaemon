@@ -236,7 +236,9 @@ pid_t daemon_fork(void) {
             goto fail;
 
         } else if (pid == 0) {
+#ifdef TIOCNOTTY
             int tty_fd;
+#endif
             /* Second child */
 
             if (sigaction(SIGCHLD, &sa_old, NULL) < 0) {
@@ -478,9 +480,9 @@ int daemon_close_all(int except_fd, ...) {
 int daemon_close_allv(const int except_fds[]) {
     struct rlimit rl;
     int fd;
-    int saved_errno;
 
 #ifdef __linux__
+    int saved_errno;
 
     DIR *d;
 
