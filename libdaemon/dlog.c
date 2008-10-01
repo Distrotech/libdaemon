@@ -32,6 +32,20 @@
 enum daemon_log_flags daemon_log_use = DAEMON_LOG_AUTO|DAEMON_LOG_STDERR;
 const char* daemon_log_ident = NULL;
 
+static int daemon_verbosity_level = LOG_WARNING;
+
+void daemon_set_verbosity(int verbosity_prio) {
+
+  /* Allow using negative verbosity levels to hide _all_ messages */
+  if ( verbosity_prio > 0 &&
+       (verbosity_prio & LOG_PRIMASK) != LOG_PRIMASK ) {
+    daemon_log(LOG_ERR, "The value %d is not a valid priority value",
+	       verbosity_prio);
+  }
+
+  daemon_verbosity_level = verbosity_prio & LOG_PRIMASK;
+}
+
 void daemon_logv(int prio, const char* template, va_list arglist) {
     int saved_errno;
 
@@ -41,6 +55,9 @@ void daemon_logv(int prio, const char* template, va_list arglist) {
         openlog(daemon_log_ident ? daemon_log_ident : "UNKNOWN", LOG_PID, LOG_DAEMON);
         vsyslog(prio | LOG_DAEMON, template, arglist);
     }
+
+    if ( prio > daemon_verbosity_level )
+      goto end_daemon_logv;
 
     if (daemon_log_use & DAEMON_LOG_STDERR) {
         vfprintf(stderr, template, arglist);
@@ -52,6 +69,7 @@ void daemon_logv(int prio, const char* template, va_list arglist) {
         fprintf(stdout, "\n");
     }
 
+ end_daemon_logv:
     errno = saved_errno;
 }
 
