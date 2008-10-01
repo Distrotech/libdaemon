@@ -81,5 +81,5 @@ AC_ARG_ENABLE(examples,
        enable_examples="yes")
 AM_CONDITIONAL(EXAMPLES, [test "$enable_examples" = "yes"])
 
-AC_CONFIG_FILES([libdaemon/Makefile Makefile doc/Makefile doc/README.html doc/doxygen.conf examples/Makefile libdaemon.pc])
+AC_CONFIG_FILES([libdaemon/Makefile Makefile doc/Makefile doc/README.html doc/doxygen.conf examples/Makefile pkgconfig/libdaemon.pc pkgconfig/libdaemon-uninstalled.pc])
 AC_OUTPUT

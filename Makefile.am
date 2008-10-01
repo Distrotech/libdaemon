@@ -26,7 +26,7 @@ SUBDIRS += examples
 endif
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libdaemon.pc
+pkgconfig_DATA = pkgconfig/libdaemon.pc
 
 dist_noinst_DATA =
 MAINTAINERCLEANFILES=
