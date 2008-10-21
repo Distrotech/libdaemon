@@ -81,6 +81,20 @@ void daemon_logv(int prio, const char* t, va_list ap);
  */
 char *daemon_ident_from_argv0(char *argv0);
 
+/**
+ * @brief Setter for the verbosity level of standard output.
+ *
+ * @param verbose_level Minimum priority level for messages to output
+ * on standard output/error
+ *
+ * Allows to decide which messages to output on standard output/error
+ * streams. All messages are logged to syslog and this setting does
+ * not influence that.
+ *
+ * The default value is LOG_WARNING.
+ */
+void daemon_set_verbosity(int verbosity_prio);
+
 #ifdef __cplusplus
 }
 #endif
