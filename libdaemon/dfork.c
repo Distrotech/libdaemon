@@ -42,6 +42,14 @@
 #include "dnonblock.h"
 #include "dlog.h"
 
+#if defined(_NSIG) /* On glibc NSIG does not count RT signals */
+# define SIGNAL_UPPER_BOUND _NSIG
+#elif defined(NSIG) /* Solaris defines just this */
+# define SIGNAL_UPPER_BOUND NSIG
+#else
+# error "Unknown upper bound for signals"
+#endif
+
 static int _daemon_retval_pipe[2] = { -1, -1 };
 
 static int _null_open(int f, int fd) {
@@ -228,7 +236,9 @@ pid_t daemon_fork(void) {
             goto fail;
 
         } else if (pid == 0) {
+#ifdef TIOCNOTTY
             int tty_fd;
+#endif
             /* Second child */
 
             if (sigaction(SIGCHLD, &sa_old, NULL) < 0) {
@@ -470,9 +480,9 @@ int daemon_close_all(int except_fd, ...) {
 int daemon_close_allv(const int except_fds[]) {
     struct rlimit rl;
     int fd;
-    int saved_errno;
 
 #ifdef __linux__
+    int saved_errno;
 
     DIR *d;
 
@@ -665,7 +675,7 @@ int daemon_reset_sigs(int except, ...) {
 int daemon_reset_sigsv(const int except[]) {
     int sig;
 
-    for (sig = 1; sig < _NSIG; sig++) {
+    for (sig = 1; sig < SIGNAL_UPPER_BOUND; sig++) {
         int reset = 1;
 
         switch (sig) {
