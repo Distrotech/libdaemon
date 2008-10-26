@@ -35,6 +35,7 @@
 #include <sys/select.h>
 #include <fcntl.h>
 #include <stddef.h>
+#include <sys/time.h>
 
 #include "dpid.h"
 #include "dlog.h"
