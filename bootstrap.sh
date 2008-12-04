@@ -55,7 +55,7 @@ else
     mkdir -p common
 
     "$LIBTOOLIZE" -c --force
-    run_versioned aclocal "$VERSION" -I common
+    run_versioned aclocal "$VERSION" -I m4
     run_versioned autoconf 2.59 -Wall
     run_versioned autoheader 2.59
     run_versioned automake "$VERSION" -a -c --foreign
