@@ -541,6 +541,9 @@ int daemon_close_allv(const int except_fds[]) {
 
                 return -1;
             }
+
+            if (fd == _daemon_retval_pipe[0])
+                _daemon_retval_pipe[0] = -1;    /* mark as closed */
         }
 
         closedir(d);
@@ -572,6 +575,9 @@ int daemon_close_allv(const int except_fds[]) {
 
         if (close(fd) < 0 && errno != EBADF)
             return -1;
+
+        if (fd == _daemon_retval_pipe[0])
+            _daemon_retval_pipe[0] = -1;        /* mark as closed */
     }
 
     return 0;
