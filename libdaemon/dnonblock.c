@@ -40,5 +40,5 @@ int daemon_nonblock(int fd, int b) {
     if (c == a)
         return 0;
 
-    return fcntl(fd, F_SETFL, a);
+    return fcntl(fd, F_SETFL, c);
 }
