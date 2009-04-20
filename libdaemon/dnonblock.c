@@ -33,9 +33,9 @@ int daemon_nonblock(int fd, int b) {
         return -1;
 
     if (b)
-        c = a | O_NDELAY;
+        c = a | O_NONBLOCK;
     else
-        c = a & ~O_NDELAY;
+        c = a & ~O_NONBLOCK;
 
     if (c == a)
         return 0;
