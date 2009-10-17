@@ -479,7 +479,7 @@ int daemon_close_all(int except_fd, ...) {
 /** Same as daemon_close_all but takes an array of fds, terminated by -1 */
 int daemon_close_allv(const int except_fds[]) {
     struct rlimit rl;
-    int fd;
+    int fd, maxfd;
 
 #ifdef __linux__
     int saved_errno;
@@ -549,14 +549,13 @@ int daemon_close_allv(const int except_fds[]) {
 
 #endif
 
-    if (getrlimit(RLIMIT_NOFILE, &rl) < 0)
-        return -1;
+    if (getrlimit(RLIMIT_NOFILE, &rl) > 0)
+        maxfd = (int) rl.rlim_max;
+    else
+        maxfd = sysconf(_SC_OPEN_MAX);
 
-    for (fd = 0; fd < (int) rl.rlim_max; fd++) {
+    for (fd = 3; fd < maxfd; fd++) {
         int i, found;
-
-        if (fd <= 3)
-            continue;
 
         if (fd == _daemon_retval_pipe[1])
             continue;
