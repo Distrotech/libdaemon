@@ -44,11 +44,7 @@ AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 
-DESIRED_FLAGS="-Wall -W -Wextra -pedantic -pipe -Wformat -Wold-style-definition -Wdeclaration-after-statement -Wfloat-equal -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -Wmissing-noreturn -Wshadow -Wendif-labels -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wno-unused-parameter -ffast-math"
-
-for flag in $DESIRED_FLAGS ; do
-  CC_CHECK_CFLAGS([$flag], [CFLAGS="$CFLAGS $flag"])
-done
+CC_CHECK_CFLAGS_APPEND([-Wall -W -Wextra -pedantic -pipe -Wformat -Wold-style-definition -Wdeclaration-after-statement -Wfloat-equal -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -Wmissing-noreturn -Wshadow -Wendif-labels -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wno-unused-parameter -ffast-math])
 
 # Checks for header files.
 AC_HEADER_ASSERT
@@ -73,6 +69,8 @@ AC_TYPE_SIGNAL
 AC_TYPE_SIZE_T
 
 AC_SYS_LARGEFILE
+
+CC_NOUNDEFINED
 
 ZP_LYNX_DOC
 
