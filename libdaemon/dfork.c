@@ -515,7 +515,7 @@ int daemon_close_allv(const int except_fds[]) {
                 return -1;
             }
 
-            if (fd <= 3)
+            if (fd < 3)
                 continue;
 
             if (fd == dirfd(d))
