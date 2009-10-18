@@ -54,10 +54,10 @@ int main(int argc, char *argv[]) {
     if (argc >= 2 && !strcmp(argv[1], "-k")) {
         int ret;
 
-        /* Kill daemon with SIGINT */
+        /* Kill daemon with SIGTERM */
 
         /* Check if the new function daemon_pid_file_kill_wait() is available, if it is, use it. */
-        if ((ret = daemon_pid_file_kill_wait(SIGINT, 5)) < 0)
+        if ((ret = daemon_pid_file_kill_wait(SIGTERM, 5)) < 0)
             daemon_log(LOG_WARNING, "Failed to kill daemon: %s", strerror(errno));
 
         return ret < 0 ? 1 : 0;
@@ -161,7 +161,7 @@ int main(int argc, char *argv[]) {
                     case SIGINT:
                     case SIGQUIT:
                     case SIGTERM:
-                        daemon_log(LOG_WARNING, "Got SIGINT, SIGQUIT or SIGTERM");
+                        daemon_log(LOG_WARNING, "Got SIGINT, SIGQUIT or SIGTERM.");
                         quit = 1;
                         break;
 
