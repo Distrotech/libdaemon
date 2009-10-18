@@ -85,8 +85,13 @@ void daemon_logv(int prio, const char* t, va_list ap);
  */
 char *daemon_ident_from_argv0(char *argv0);
 
-/**
- * @brief Setter for the verbosity level of standard output.
+/** This variable is defined to 1 iff daemon_set_verbosity() is available.
+ * @since 0.14
+ * @see daemon_set_verbosity()
+ */
+#define DAEMON_SET_VERBOSITY_AVAILABLE 1
+
+/** Setter for the verbosity level of standard output.
  *
  * @param verbosity_prio Minimum priority level for messages to output
  * on standard output/error
