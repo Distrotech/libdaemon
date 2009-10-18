@@ -70,7 +70,10 @@ int main(int argc, char *argv[]) {
     }
 
     /* Prepare for return value passing from the initialization procedure of the daemon process */
-    daemon_retval_init();
+    if (daemon_retval_init() < 0) {
+        daemon_log(LOG_ERR, "Failed to create pipe.");
+        return 1;
+    }
 
     /* Do the fork */
     if ((pid = daemon_fork()) < 0) {
