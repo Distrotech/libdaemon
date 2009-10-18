@@ -190,7 +190,10 @@ pid_t daemon_fork(void) {
     } else if (pid == 0) {
         pid_t dpid;
 
-        /* First child */
+        /* First child. Now we are sure not to be a session leader or
+         * process group leader anymore, i.e. we know that setsid()
+         * will succeed. */
+
         if (daemon_log_use & DAEMON_LOG_AUTO)
             daemon_log_use = DAEMON_LOG_SYSLOG;
 
@@ -202,6 +205,7 @@ pid_t daemon_fork(void) {
         /* Move file descriptors up*/
         if (move_fd_up(&pipe_fds[1]) < 0)
             goto fail;
+
         if (_daemon_retval_pipe[0] >= 0 && move_fd_up(&_daemon_retval_pipe[0]) < 0)
             goto fail;
         if (_daemon_retval_pipe[1] >= 0 && move_fd_up(&_daemon_retval_pipe[1]) < 0)
@@ -222,9 +226,16 @@ pid_t daemon_fork(void) {
             goto fail;
         }
 
-        setsid();
-        setpgid(0, 0);
-        umask(0777);
+        /* Create a new session. This will create a new session and a
+         * new process group for us and we will be the ledaer of
+         * both. This should always succeed because we cannot be the
+         * process group leader because we just forked. */
+        if (setsid() < 0) {
+            daemon_log(LOG_ERR, "setsid() failed: %s", strerror(errno));
+            goto fail;
+        }
+
+        umask(0077);
 
         if (chdir("/") < 0) {
             daemon_log(LOG_ERR, "chdir() failed: %s", strerror(errno));
@@ -236,10 +247,12 @@ pid_t daemon_fork(void) {
             goto fail;
 
         } else if (pid == 0) {
-#ifdef TIOCNOTTY
-            int tty_fd;
-#endif
-            /* Second child */
+            /* Second child. Our father will exit right-away. That way
+             * we can be sure that we are a child of init now, even if
+             * the process which spawned us stays around for a longer
+             * time. Also, since we are no session leader anymore we
+             * can be sure that we will never acquire a controlling
+             * TTY. */
 
             if (sigaction(SIGCHLD, &sa_old, NULL) < 0) {
                 daemon_log(LOG_ERR, "close() failed: %s", strerror(errno));
@@ -266,15 +279,6 @@ pid_t daemon_fork(void) {
                 goto fail;
             }
 
-            setsid();
-            setpgid(0, 0);
-
-#ifdef TIOCNOTTY
-            if ((tty_fd = open("/dev/tty", O_RDWR)) >= 0) {
-                ioctl(tty_fd, TIOCNOTTY, NULL);
-                close(tty_fd);
-            }
-#endif
             dpid = getpid();
             if (atomic_write(pipe_fds[1], &dpid, sizeof(dpid)) != sizeof(dpid)) {
                 daemon_log(LOG_ERR, "write() failed: %s", strerror(errno));
