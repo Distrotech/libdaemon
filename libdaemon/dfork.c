@@ -328,7 +328,9 @@ pid_t daemon_fork(void) {
         if (atomic_read(pipe_fds[0], &dpid, sizeof(dpid)) != sizeof(dpid)) {
             daemon_log(LOG_ERR, "Failed to read daemon PID.");
             dpid = (pid_t) -1;
-        }
+            errno = EINVAL;
+        } else if (dpid == (pid_t) -1)
+            errno = EIO;
 
         saved_errno = errno;
         close(pipe_fds[0]);
