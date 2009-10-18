@@ -1,3 +1,4 @@
+compile
 *~
 *.tar.gz
 config.rpath
@@ -21,8 +22,8 @@ config.sub
 configure
 depcomp
 install-sh
-libdaemon.pc
 libdaemon.spec
 libtool
 ltmain.sh
 missing
+*.pc
