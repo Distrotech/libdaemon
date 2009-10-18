@@ -76,7 +76,9 @@ pid_t daemon_pid_file_is_running(void);
  */
 int daemon_pid_file_kill(int s);
 
-/** This variable is defined to 1 iff daemon_pid_file_kill_wait() is supported.*/
+/** This variable is defined to 1 iff daemon_pid_file_kill_wait() is supported.
+ * @since 0.3
+ * @see daemon_pid_file_kill_wait() */
 #define DAEMON_PID_FILE_KILL_WAIT_AVAILABLE 1
 
 /** Similar to daemon_pid_file_kill() but waits until the process
@@ -87,6 +89,8 @@ int daemon_pid_file_kill(int s);
  * @param s The signal to send
  * @param m Seconds to wait at maximum
  * @return zero on success, nonzero on failure (timeout condition is considered a failure)
+ * @since 0.3
+ * @see DAEMON_PID_FILE_KILL_WAIT_AVAILABLE
  */
 int daemon_pid_file_kill_wait(int s, int m);
 

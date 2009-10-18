@@ -44,7 +44,8 @@ enum daemon_log_flags {
                                   the daemon process. */
 };
 
-/** This variable is used to specify the log target(s) to use. Defaults to DAEMON_LOG_STDERR|DAEMON_LOG_AUTO */
+/** This variable is used to specify the log target(s) to
+ * use. Defaults to DAEMON_LOG_STDERR|DAEMON_LOG_AUTO */
 extern enum daemon_log_flags daemon_log_use;
 
 /** Specifies the syslog identification, use daemon_ident_from_argv0()
@@ -52,9 +53,9 @@ extern enum daemon_log_flags daemon_log_use;
 extern const char* daemon_log_ident;
 
 #if defined(__GNUC__) && ! defined(DAEMON_GCC_PRINTF_ATTR)
-/** A macro for making use of GCCs printf compilation warnings */
 #define DAEMON_GCC_PRINTF_ATTR(a,b) __attribute__ ((format (printf, a, b)))
 #else
+/** A macro for making use of GCCs printf compilation warnings */
 #define DAEMON_GCC_PRINTF_ATTR(a,b)
 #endif
 
@@ -64,7 +65,10 @@ extern const char* daemon_log_ident;
  */
 void daemon_log(int prio, const char* t, ...) DAEMON_GCC_PRINTF_ATTR(2,3);
 
-/** This variable is defined to 1 iff daemon_logv() is supported.*/
+/** This variable is defined to 1 iff daemon_logv() is supported.
+ * @since 0.11
+ * @see daemon_logv()
+ */
 #define DAEMON_LOGV_AVAILABLE 1
 
 /** Same as daemon_log(), but without variadic arguments
@@ -84,7 +88,7 @@ char *daemon_ident_from_argv0(char *argv0);
 /**
  * @brief Setter for the verbosity level of standard output.
  *
- * @param verbose_level Minimum priority level for messages to output
+ * @param verbosity_prio Minimum priority level for messages to output
  * on standard output/error
  *
  * Allows to decide which messages to output on standard output/error
@@ -92,6 +96,9 @@ char *daemon_ident_from_argv0(char *argv0);
  * not influence that.
  *
  * The default value is LOG_WARNING.
+ *
+ * @since 0.14
+ * @see DAEMON_SET_VERBOSITY_AVAILABLE
  */
 void daemon_set_verbosity(int verbosity_prio);
 
