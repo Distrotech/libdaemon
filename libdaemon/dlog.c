@@ -32,7 +32,7 @@
 enum daemon_log_flags daemon_log_use = DAEMON_LOG_AUTO|DAEMON_LOG_STDERR;
 const char* daemon_log_ident = NULL;
 
-static int daemon_verbosity_level = LOG_WARNING;
+static int daemon_verbosity_level = LOG_INFO;
 
 void daemon_set_verbosity(int verbosity_prio) {
 
